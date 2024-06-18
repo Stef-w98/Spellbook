@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     var pagesContainer = document.getElementById('pages');
+    var bookContainer = document.querySelector('.book-container');
 
     function handleFileSelect(event) {
         const file = event.target.files[0];
@@ -9,8 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 const content = e.target.result;
                 const spells = parseSpells(content);
                 insertSpellsIntoPages(spells);
+                // Set z-index of book-container to 1 when the book is shown
+                bookContainer.style.zIndex = '1';
             };
             reader.readAsText(file);
+        } else {
+            // Reset z-index of book-container to -1 when no file is uploaded
+            bookContainer.style.zIndex = '-1';
         }
     }
 
@@ -128,4 +134,54 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+});
+
+// Drawing logic
+const canvas = document.getElementById('drawCanvas');
+const ctx = canvas.getContext('2d');
+let drawing = false;
+let clearTimeoutId;
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+canvas.addEventListener('mousedown', (event) => {
+    drawing = true;
+    ctx.beginPath();
+    clearTimeout(clearTimeoutId); // Clear previous timeout if any
+});
+canvas.addEventListener('mouseup', () => {
+    drawing = false;
+    clearTimeoutId = setTimeout(clearCanvas, 3000); // Clear canvas after 3 seconds
+});
+canvas.addEventListener('mousemove', draw);
+
+canvas.addEventListener('mouseleave', () => {
+    drawing = false; // Stop drawing if the mouse leaves the canvas
+});
+
+function draw(event) {
+    if (!drawing) return;
+
+    ctx.lineWidth = 5;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#A3865B';
+
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+}
+
+function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 });
