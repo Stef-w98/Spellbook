@@ -1,102 +1,131 @@
-document.addEventListener('DOMContentLoaded', function(){
-    var pages = document.getElementsByClassName('page');
-    for(var i = 0; i < pages.length; i++)
-    {
-        var page = pages[i];
-        if (i % 2 === 0)
-        {
-            page.style.zIndex = (pages.length - i);
-        }
-    }
+document.addEventListener('DOMContentLoaded', function () {
+    var pagesContainer = document.getElementById('pages');
 
-    for(var i = 0; i < pages.length; i++)
-    {
-        pages[i].pageNum = i + 1;
-        pages[i].onclick=function()
-        {
-            if (this.pageNum % 2 === 0)
-            {
-                this.classList.remove('flipped');
-                this.previousElementSibling.classList.remove('flipped');
-            }
-            else
-            {
-                this.classList.add('flipped');
-                this.nextElementSibling.classList.add('flipped');
-            }
-        }
-    }
-
-    // Function to load spells from the .md file
-    function loadSpells() {
-        fetch('/mnt/data/spells.md')
-            .then(response => response.text())
-            .then(data => {
-                const spells = parseSpells(data);
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const content = e.target.result;
+                const spells = parseSpells(content);
                 insertSpellsIntoPages(spells);
-            });
+            };
+            reader.readAsText(file);
+        }
     }
 
-    // Function to parse spells from the markdown content
     function parseSpells(markdown) {
-        const sections = markdown.split('\n\n');
-        const spells = {};
-        let currentLevel = '';
+        const spells = [];
+        const spellSections = markdown.split('#### ');
 
-        sections.forEach(section => {
-            const lines = section.split('\n');
-            lines.forEach(line => {
-                if (line.startsWith('#')) {
-                    currentLevel = line.substring(1).trim();
-                    spells[currentLevel] = [];
-                } else if (line.startsWith('-')) {
-                    const spell = line.substring(1).trim();
-                    spells[currentLevel].push(spell);
-                }
-            });
+        spellSections.forEach(section => {
+            if (section.trim()) {
+                const spell = '#### ' + section.trim();
+                spells.push(spell);
+            }
         });
 
         return spells;
     }
 
-    // Function to insert spells into book pages
+    function formatSpell(spell) {
+        const formatted = spell
+            .replace(/#### (.*)/g, '<h2 class="spell-title">$1</h2>')
+            .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+            .replace(/___/g, '<hr class="spell-divider">')
+            .replace(/- \*\*([^*]+)\*\*: (.*)/g, '<p class="spell-description"><strong>$1:</strong> $2</p>')
+            .replace(/---/g, '<hr class="spell-divider">')
+            .replace(/- ([^*]+): (.*)/g, '<p class="spell-description"><strong>$1:</strong> $2</p>');
+        return formatted;
+    }
+
     function insertSpellsIntoPages(spells) {
-        const pagesContainer = document.getElementById('pages');
         pagesContainer.innerHTML = ''; // Clear existing pages
 
-        Object.keys(spells).forEach(level => {
-            const levelHeader = `<div class="page"><h2>${level}</h2></div>`;
-            pagesContainer.innerHTML += levelHeader;
+        // Add front cover
+        pagesContainer.innerHTML += `
+            <div class="page cover front-cover">
+                <h1>Spellbook</h1>
+            </div>`;
 
-            spells[level].forEach(spell => {
-                const spellPage = `<div class="page"><p>${spell}</p></div>`;
-                pagesContainer.innerHTML += spellPage;
-            });
+        let currentPage = createNewPage();
+        let spellCount = 0;
+
+        spells.forEach(spell => {
+            const formattedSpell = formatSpell(spell);
+            const spellElement = document.createElement('div');
+            spellElement.classList.add('spell');
+            spellElement.innerHTML = formattedSpell;
+
+            pagesContainer.appendChild(spellElement);
+            const spellHeight = spellElement.offsetHeight;
+            pagesContainer.removeChild(spellElement);
+
+            if (spellCount < 2 && (currentPage.offsetHeight + spellHeight) <= pagesContainer.offsetHeight) {
+                currentPage.querySelector('.spell-content').innerHTML += formattedSpell + '<br><br>';
+                spellCount++;
+            } else {
+                currentPage = createNewPage();
+                currentPage.querySelector('.spell-content').innerHTML += formattedSpell + '<br><br>';
+                spellCount = 1;
+            }
         });
 
-        // Reinitialize the book after adding new pages
-        var newPages = document.getElementsByClassName('page');
-        for (var i = 0; i < newPages.length; i++) {
-            var page = newPages[i];
+        // Add back cover
+        pagesContainer.innerHTML += `
+            <div class="page cover back-cover"></div>`;
+
+        initializeBook();
+    }
+
+    function createNewPage() {
+        const newPage = document.createElement('div');
+        newPage.classList.add('page');
+        newPage.innerHTML = '<div class="spell-content"></div>';
+        pagesContainer.appendChild(newPage);
+        return newPage;
+    }
+
+    function initializeBook() {
+        var pages = document.getElementsByClassName('page');
+        for (var i = 0; i < pages.length; i++) {
+            var page = pages[i];
             if (i % 2 === 0) {
-                page.style.zIndex = (newPages.length - i);
+                page.style.zIndex = (pages.length - i);
             }
         }
 
-        for (var i = 0; i < newPages.length; i++) {
-            newPages[i].pageNum = i + 1;
-            newPages[i].onclick = function () {
+        for (var i = 0; i < pages.length; i++) {
+            pages[i].pageNum = i + 1;
+            pages[i].onclick = function () {
                 if (this.pageNum % 2 === 0) {
                     this.classList.remove('flipped');
                     this.previousElementSibling.classList.remove('flipped');
                 } else {
                     this.classList.add('flipped');
-                    this.nextElementSibling.classList.add('flipped');
+                    if (this.nextElementSibling) {
+                        this.nextElementSibling.classList.add('flipped');
+                    }
                 }
+                updateVisibility();
+            }
+        }
+
+        // Initial call to update visibility for the first page
+        updateVisibility();
+    }
+
+    function updateVisibility() {
+        var pages = document.getElementsByClassName('page');
+        for (var i = 0; i < pages.length; i++) {
+            if ((i % 2 === 0 && pages[i].classList.contains('flipped')) ||
+                (i % 2 !== 0 && !pages[i].classList.contains('flipped'))) {
+                pages[i].classList.add('show');
+            } else {
+                pages[i].classList.remove('show');
             }
         }
     }
 
-    // Load spells when the page is loaded
-    loadSpells();
+    document.getElementById('fileInput').addEventListener('change', handleFileSelect);
 });
