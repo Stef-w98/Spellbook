@@ -1,3 +1,4 @@
+/* Existing styles */
 .book {
     transition: opacity 0.4s 0.2s;
 }
@@ -85,7 +86,7 @@ p {
     left: 0;
     border-radius: 4px 0 0 4px;
     border-color: black;
-  /*  background-image: linear-gradient(to left, rgba(0,0,0,.12) 0%, rgba(0,0,0,0) 10%); */
+    /*  background-image: linear-gradient(to left, rgba(0,0,0,.12) 0%, rgba(0,0,0,0) 10%); */
 }
 .book .page:nth-child(even):before {
     background: rgba(0, 0, 0, 0.2);
@@ -162,10 +163,60 @@ html {
 body {
     min-height: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
     padding: 2em 0;
     line-height: 1.5em;
+}
+.header {
+    width: 100%;
+    background: #f8c58c;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tutorial h2 {
+    font-family: 'arial', serif;
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.tutorial p {
+    font-size: 1em;
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+/* New styles for upload button */
+.upload-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px 0;
+    font-family: 'Uncial Antiqua', serif;
+    font-size: 1.2em;
+    color: #fff;
+    background-color: #8B4513;
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    text-align: center;
+}
+
+.upload-button:hover {
+    background-color: #A0522D;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
+}
+
+/* New styles for tutorial and quill cursor */
+body {
+    cursor: url('http://www.rw-designer.com/cursor-extern.php?id=43415'), auto;
 }
 .page:nth-child(odd){
     background-position: right top;
@@ -191,4 +242,3 @@ body {
     background: #8B4513;
     margin: 1em 0;
 }
-
