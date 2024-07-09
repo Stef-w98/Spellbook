@@ -52,3 +52,10 @@
     cursor: pointer;
 }
 
+.spell-name {
+    cursor: pointer;
+}
+
+.spell-name:hover {
+    text-decoration: underline;
+}

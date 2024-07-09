@@ -1,11 +1,15 @@
+window.spellCache = [];
+
 document.addEventListener('DOMContentLoaded', function () {
     const pagesContainer = document.getElementById('pages');
-    let spellCache = [];
+
+    // Clear local storage to avoid caching issues during development
+    localStorage.removeItem('spellCache');
 
     if (localStorage.getItem('spellCache')) {
-        spellCache = JSON.parse(localStorage.getItem('spellCache'));
-        if (isCacheComplete(spellCache)) {
-            createSpellTable(spellCache);
+        window.spellCache = JSON.parse(localStorage.getItem('spellCache'));
+        if (isCacheComplete(window.spellCache)) {
+            createSpellTable(window.spellCache);
             hideLoadingBar();
         } else {
             fetchSpellsFromAPI();
@@ -20,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const bar = showLoadingBar();
 
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, { cache: 'no-store' });
             const data = await response.json();
             const totalSpells = data.results.length;
             let completedCalls = 0;
@@ -32,11 +36,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const detailedSpells = await Promise.all(spellPromises);
 
-            spellCache = detailedSpells;
-            localStorage.setItem('spellCache', JSON.stringify(spellCache));
+            console.log('Fetched detailed spells:', detailedSpells);
+
+            window.spellCache = detailedSpells;
+            localStorage.setItem('spellCache', JSON.stringify(window.spellCache));
             createSpellTable(detailedSpells);
         } catch (error) {
-            console.error(error);
+            console.error('Error fetching spells from API:', error);
         } finally {
             hideLoadingBar();
         }
@@ -44,27 +50,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function fetchIndividualSpell(url, index, totalSpells, bar, onComplete) {
         try {
-            const response = await fetch(`https://www.dnd5eapi.co${url}`);
+            console.log(`Fetching spell: ${url}`);
+            const response = await fetch(`https://www.dnd5eapi.co${url}`, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const spellDetails = await response.json();
             onComplete();
-            return {
-                name: spellDetails.name,
-                level: spellDetails.level,
-                school: spellDetails.school.name,
-                casting_time: spellDetails.casting_time,
-                range: spellDetails.range,
-                duration: spellDetails.duration
-            };
+            console.log('Fetched spell details:', spellDetails);
+            return spellDetails;
         } catch (error) {
-            console.error(error);
+            console.error(`Error fetching individual spell at ${url}:`, error);
             onComplete();
             return {
                 name: 'Unknown',
                 level: 'N/A',
-                school: 'N/A',
+                school: { name: 'N/A' },
                 casting_time: 'N/A',
                 range: 'N/A',
-                duration: 'N/A'
+                duration: 'N/A',
+                components: [],
+                material: '',
+                desc: ['No description available.'],
+                higher_level: [],
+                concentration: false,
+                ritual: false,
+                attack_type: 'N/A',
+                damage: { damage_type: { name: 'N/A' }, damage_at_slot_level: {} },
+                classes: [],
+                subclasses: []
             };
         }
     }
@@ -75,49 +89,26 @@ document.addEventListener('DOMContentLoaded', function () {
         const newPage = document.createElement('div');
         newPage.classList.add('page');
         newPage.innerHTML = `
-        <h2>Search Spells</h2>
-        <input type="text" id="spellSearch" placeholder="Search spells">
-        <table id="spellTable">
-            <thead>
-                <tr>
-                    <th data-column="name" class="sortable">Name <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
-                    <th data-column="level" class="sortable">Level <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
-                    <th data-column="school" class="sortable">School <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
-                    <th data-column="casting_time" class="sortable">Casting Time <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
-                    <th data-column="range" class="sortable">Range <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
-                    <th data-column="duration" class="sortable">Duration <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    `;
+            <h2>Search Spells</h2>
+            <input type="text" id="spellSearch" placeholder="Search spells">
+            <table id="spellTable">
+                <thead>
+                    <tr>
+                        <th data-column="name" class="sortable">Name <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
+                        <th data-column="level" class="sortable">Level <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
+                        <th data-column="school" class="sortable">School <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
+                        <th data-column="casting_time" class="sortable">Casting Time <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
+                        <th data-column="range" class="sortable">Range <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
+                        <th data-column="duration" class="sortable">Duration <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        `;
         pagesContainer.appendChild(newPage);
 
-        const tableBody = document.getElementById('spellTable').getElementsByTagName('tbody')[0];
-        spells.forEach(spell => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-            <td>${spell.name}</td>
-            <td>${spell.level}</td>
-            <td>${spell.school}</td>
-            <td>${spell.casting_time}</td>
-            <td>${spell.range}</td>
-            <td>${spell.duration}</td>
-            <td><button class="add-spell-button" data-spell-name="${spell.name}">Add</button></td>
-        `;
-            tableBody.appendChild(row);
-        });
-
-        const searchInput = document.getElementById('spellSearch');
-        searchInput.addEventListener('keyup', () => {
-            const searchTerm = searchInput.value.toLowerCase();
-            const tableRows = tableBody.querySelectorAll('tr');
-            tableRows.forEach(row => {
-                const spellName = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
-                row.style.display = spellName.includes(searchTerm) ? '' : 'none';
-            });
-        });
+        refreshTableBody(spells);
 
         document.querySelectorAll('#spellTable th.sortable').forEach(header => {
             header.addEventListener('click', function () {
@@ -125,13 +116,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 const currentOrder = parseInt(this.dataset.order, 10) || -1;
                 const newOrder = -currentOrder;
                 this.dataset.order = newOrder;
-                console.log(`Sorting by column: ${column}, current order: ${currentOrder}, new order: ${newOrder}`);
                 const sortedSpells = spells.slice().sort((a, b) => {
                     if (a[column] < b[column]) return newOrder;
                     if (a[column] > b[column]) return -newOrder;
                     return 0;
                 });
-                console.log('Sorted Spells:', sortedSpells);
                 refreshTableBody(sortedSpells);
                 updateSortIcons(this, newOrder);
             });
@@ -144,14 +133,14 @@ document.addEventListener('DOMContentLoaded', function () {
         spells.forEach(spell => {
             const row = document.createElement('tr');
             row.innerHTML = `
-            <td>${spell.name}</td>
-            <td>${spell.level}</td>
-            <td>${spell.school}</td>
-            <td>${spell.casting_time}</td>
-            <td>${spell.range}</td>
-            <td>${spell.duration}</td>
-            <td><button class="add-spell-button" data-spell-name="${spell.name}">Add</button></td>
-        `;
+                <td class="spell-name">${spell.name}</td>
+                <td>${spell.level}</td>
+                <td>${spell.school?.name || 'N/A'}</td>
+                <td>${spell.casting_time}</td>
+                <td>${spell.range}</td>
+                <td>${spell.duration}</td>
+                <td><button class="add-spell-button" data-spell-name="${spell.name}">Add</button></td>
+            `;
             tableBody.appendChild(row);
         });
     }
@@ -161,7 +150,6 @@ document.addEventListener('DOMContentLoaded', function () {
             th.classList.remove('sorted', 'asc', 'desc');
         });
         header.classList.add('sorted', order === 1 ? 'asc' : 'desc');
-        console.log(`Updating icon for header: ${header.getAttribute('data-column')}, order: ${order}`);
     }
 
     function isCacheComplete(spellCache) {
