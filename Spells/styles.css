@@ -71,6 +71,28 @@ th, td {
 th {
     background-color: #4CAF50;
     color: white;
+    position: relative;
+    cursor: pointer;
+}
+
+th .sort-icon-up,
+th .sort-icon-down {
+    display: inline; /* Change from 'none' to 'inline' */
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ccc; /* Light color for default state */
+}
+
+th.sorted.asc .sort-icon-up,
+th.sorted.desc .sort-icon-down {
+    color: #000; /* Darker color for active sort state */
+}
+
+th.sorted.asc .sort-icon-down,
+th.sorted.desc .sort-icon-up {
+    color: #ccc; /* Ensure inactive icon stays light */
 }
 
 td button {
@@ -101,7 +123,7 @@ td button:disabled {
     color: #333;
 }
 
-.ldBar-label{
+.ldBar-label {
     display: flex;
     margin: 0;
     padding: 0;
@@ -109,3 +131,4 @@ td button:disabled {
     align-content: center;
     align-items: center;
 }
+
