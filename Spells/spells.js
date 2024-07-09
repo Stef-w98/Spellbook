@@ -2,44 +2,54 @@ document.addEventListener('DOMContentLoaded', function () {
     const pagesContainer = document.getElementById('pages');
     let spellCache = [];
 
-    if (localStorage.getItem('spellCache')) {
-        spellCache = JSON.parse(localStorage.getItem('spellCache'));
-        if (isCacheComplete(spellCache)) {
-            createSpellTable(spellCache);
-        } else {
-            fetchSpellsFromAPI();
-        }
-    } else {
-        fetchSpellsFromAPI();
-    }
+    // Commented out caching for now
+    // if (localStorage.getItem('spellCache')) {
+    //     spellCache = JSON.parse(localStorage.getItem('spellCache'));
+    //     if (isCacheComplete(spellCache)) {
+    //         createSpellTable(spellCache);
+    //     } else {
+    //         fetchSpellsFromAPI();
+    //     }
+    // } else {
+    fetchSpellsFromAPI();
+    // }
 
     async function fetchSpellsFromAPI() {
-        const url = 'https://www.dnd5eapi.co/api/spells'; // Replace with actual API endpoint
+        const url = 'https://www.dnd5eapi.co/api/spells';
 
-        // Show loading icon
-        showLoadingIcon();
+        // Show progress bar
+        const bar = showLoadingBar();
 
         try {
             const response = await fetch(url);
             const data = await response.json();
-            const spellPromises = data.results.map(spell => fetchIndividualSpell(spell.url));
+            const totalSpells = data.results.length;
+            let completedCalls = 0;
+
+            const spellPromises = data.results.map((spell, index) => fetchIndividualSpell(spell.url, index, totalSpells, bar, () => {
+                completedCalls++;
+                updateLoadingBar(bar, (completedCalls / totalSpells) * 100);
+            }));
+
             const detailedSpells = await Promise.all(spellPromises);
 
             spellCache = detailedSpells;
-            localStorage.setItem('spellCache', JSON.stringify(spellCache));
+            // Commented out caching for now
+            // localStorage.setItem('spellCache', JSON.stringify(spellCache));
             createSpellTable(detailedSpells);
         } catch (error) {
             console.error(error);
         } finally {
-            // Hide loading icon
-            hideLoadingIcon();
+            // Hide progress bar
+            hideLoadingBar();
         }
     }
 
-    async function fetchIndividualSpell(url) {
+    async function fetchIndividualSpell(url, index, totalSpells, bar, onComplete) {
         try {
             const response = await fetch(`https://www.dnd5eapi.co${url}`);
             const spellDetails = await response.json();
+            onComplete();  // Update progress
             return {
                 name: spellDetails.name,
                 level: spellDetails.level,
@@ -50,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
             };
         } catch (error) {
             console.error(error);
+            onComplete();  // Ensure progress is updated even if there's an error
             return {
                 name: 'Unknown',
                 level: 'N/A',
@@ -64,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function createSpellTable(spells) {
         pagesContainer.innerHTML = '';
 
-        // Add a new page with the searchable table
         const newPage = document.createElement('div');
         newPage.classList.add('page');
         newPage.innerHTML = `
@@ -87,7 +97,6 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
         pagesContainer.appendChild(newPage);
 
-        // Populate table body with spells
         const tableBody = document.getElementById('spellTable').getElementsByTagName('tbody')[0];
         spells.forEach(spell => {
             const row = document.createElement('tr');
@@ -103,7 +112,6 @@ document.addEventListener('DOMContentLoaded', function () {
             tableBody.appendChild(row);
         });
 
-        // Implement search functionality (optional)
         const searchInput = document.getElementById('spellSearch');
         searchInput.addEventListener('keyup', () => {
             const searchTerm = searchInput.value.toLowerCase();
@@ -119,23 +127,19 @@ document.addEventListener('DOMContentLoaded', function () {
         return spellCache.every(spell => spell.school && spell.casting_time && spell.range && spell.duration);
     }
 
-    function showLoadingIcon() {
-        const loadingIcon = document.createElement('img');
-        loadingIcon.src = 'loading.gif';
-        loadingIcon.id = 'loadingIcon';
-        loadingIcon.style.position = 'fixed';
-        loadingIcon.style.top = '50%';
-        loadingIcon.style.left = '50%';
-        loadingIcon.style.transform = 'translate(-50%, -50%)';
-        loadingIcon.style.width = '50px'; // Set the width of the loading icon
-        loadingIcon.style.height = '50px'; // Set the height of the loading icon
-        document.body.appendChild(loadingIcon);
+    function showLoadingBar() {
+        const loadingBar = document.getElementById('loadingBar');
+        loadingBar.style.display = 'block';
+        return new ldBar("#loadingBar");
     }
 
-    function hideLoadingIcon() {
-        const loadingIcon = document.getElementById('loadingIcon');
-        if (loadingIcon) {
-            loadingIcon.remove();
-        }
+    function updateLoadingBar(bar, value) {
+        bar.set(value); // Update the bar to the given value
+    }
+
+    function hideLoadingBar() {
+        const loadingBar = document.getElementById('loadingBar');
+        loadingBar.style.display = 'none';
     }
 });
+
