@@ -2,6 +2,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var pagesContainer = document.getElementById('pages');
     var bookContainer = document.querySelector('.book-container');
 
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navbarMenu = document.querySelector('.navbar-menu');
+
+    mobileMenu.addEventListener('click', function() {
+        mobileMenu.classList.toggle('is-active');
+        navbarMenu.classList.toggle('active');
+    });
+
     function handleFileSelect(event) {
         const file = event.target.files[0];
         if (file) {

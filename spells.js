@@ -18,6 +18,14 @@ document.addEventListener('DOMContentLoaded', function () {
         fetchSpellsFromAPI();
     }
 
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navbarMenu = document.querySelector('.navbar-menu');
+
+    mobileMenu.addEventListener('click', function() {
+        mobileMenu.classList.toggle('is-active');
+        navbarMenu.classList.toggle('active');
+    });
+
     async function fetchSpellsFromAPI() {
         const url = 'https://www.dnd5eapi.co/api/spells';
 
