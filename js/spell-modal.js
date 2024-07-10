@@ -66,7 +66,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (event.target.classList.contains('spell-name')) {
             const spellName = event.target.innerText;
             const spell = window.spellCache.find(spell => spell.name === spellName);
-            console.log('Opening modal for spell:', spell);
             openModal(spell);
         }
     });
@@ -77,3 +76,4 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+

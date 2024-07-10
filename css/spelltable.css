@@ -78,22 +78,22 @@ th {
 
 th .sort-icon-up,
 th .sort-icon-down {
-    display: inline; /* Change from 'none' to 'inline' */
+    display: inline;
     position: absolute;
     right: 5px;
     top: 50%;
     transform: translateY(-50%);
-    color: #ccc; /* Light color for default state */
+    color: #ccc;
 }
 
 th.sorted.asc .sort-icon-up,
 th.sorted.desc .sort-icon-down {
-    color: #000; /* Darker color for active sort state */
+    color: #000;
 }
 
 th.sorted.asc .sort-icon-down,
 th.sorted.desc .sort-icon-up {
-    color: #ccc; /* Ensure inactive icon stays light */
+    color: #ccc;
 }
 
 td button {

@@ -18,12 +18,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const content = e.target.result;
                 const spells = parseSpells(content);
                 insertSpellsIntoPages(spells);
-                // Set z-index of book-container to 1 when the book is shown
                 bookContainer.style.zIndex = '1';
             };
             reader.readAsText(file);
         } else {
-            // Reset z-index of book-container to -1 when no file is uploaded
             bookContainer.style.zIndex = '-1';
         }
     }

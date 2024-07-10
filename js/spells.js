@@ -3,7 +3,6 @@ window.spellCache = [];
 document.addEventListener('DOMContentLoaded', function () {
     const pagesContainer = document.getElementById('pages');
 
-    // Clear local storage to avoid caching issues during development
     localStorage.removeItem('spellCache');
 
     if (localStorage.getItem('spellCache')) {
@@ -44,8 +43,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const detailedSpells = await Promise.all(spellPromises);
 
-            console.log('Fetched detailed spells:', detailedSpells);
-
             window.spellCache = detailedSpells;
             localStorage.setItem('spellCache', JSON.stringify(window.spellCache));
             createSpellTable(detailedSpells);
@@ -58,14 +55,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function fetchIndividualSpell(url, index, totalSpells, bar, onComplete) {
         try {
-            console.log(`Fetching spell: ${url}`);
             const response = await fetch(`https://www.dnd5eapi.co${url}`, { cache: 'no-store' });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const spellDetails = await response.json();
             onComplete();
-            console.log('Fetched spell details:', spellDetails);
             return spellDetails;
         } catch (error) {
             console.error(`Error fetching individual spell at ${url}:`, error);
@@ -179,3 +174,4 @@ document.addEventListener('DOMContentLoaded', function () {
         loadingBar.style.display = 'none';
     }
 });
+
