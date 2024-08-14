@@ -236,10 +236,9 @@ body {
 .spell-title {
     font-family: 'Uncial Antiqua', serif;
     font-size: 1.5em;
-    color: #B22222;
+    color: #2E8B57;
     margin-bottom: 0.5em;
     text-align: center;
-    text-shadow: 2px 2px #FFD700;
 }
 .spell-description {
     font-family: 'Uncial Antiqua', serif;

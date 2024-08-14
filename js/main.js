@@ -1,193 +1,166 @@
 document.addEventListener('DOMContentLoaded', function () {
-    var pagesContainer = document.getElementById('pages');
-    var bookContainer = document.querySelector('.book-container');
+    const fileInput = document.getElementById('fileInput');
+    const spellCardsContainer = document.getElementById('spellCardsContainer');
 
-    const mobileMenu = document.getElementById('mobile-menu');
-    const navbarMenu = document.querySelector('.navbar-menu');
+    fileInput.addEventListener('change', handleFileUpload);
 
-    mobileMenu.addEventListener('click', function() {
-        mobileMenu.classList.toggle('is-active');
-        navbarMenu.classList.toggle('active');
-    });
-
-    function handleFileSelect(event) {
+    function handleFileUpload(event) {
         const file = event.target.files[0];
         if (file) {
+            console.log(`File selected: ${file.name}`);
             const reader = new FileReader();
             reader.onload = function (e) {
                 const content = e.target.result;
-                const spells = parseSpells(content);
-                insertSpellsIntoPages(spells);
-                bookContainer.style.zIndex = '1';
+                console.log(`File content loaded`);
+                let spells = [];
+                if (file.name.endsWith('.json')) {
+                    try {
+                        spells = JSON.parse(content);
+                        console.log(`JSON parsed successfully`);
+                    } catch (err) {
+                        console.error(`Error parsing JSON: ${err}`);
+                    }
+                } else if (file.name.endsWith('.md')) {
+                    spells = parseMarkdown(content);
+                    console.log(`Markdown parsed successfully`);
+                }
+                displaySpells(spells);
             };
             reader.readAsText(file);
-        } else {
-            bookContainer.style.zIndex = '-1';
         }
     }
 
-    function parseSpells(markdown) {
+    function parseMarkdown(markdown) {
         const spells = [];
         const spellSections = markdown.split('#### ');
 
         spellSections.forEach(section => {
             if (section.trim()) {
-                const spell = '#### ' + section.trim();
+                const spell = convertMarkdownToSpellObject('#### ' + section.trim());
                 spells.push(spell);
             }
         });
 
+        console.log(`Parsed ${spells.length} spells from markdown`);
         return spells;
     }
 
-    function formatSpell(spell) {
-        const formatted = spell
-            .replace(/#### (.*)/g, '<h2 class="spell-title">$1</h2>')
-            .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-            .replace(/___/g, '<hr class="spell-divider">')
-            .replace(/- \*\*([^*]+)\*\*: (.*)/g, '<p class="spell-description"><strong>$1:</strong> $2</p>')
-            .replace(/---/g, '<hr class="spell-divider">')
-            .replace(/- ([^*]+): (.*)/g, '<p class="spell-description"><strong>$1:</strong> $2</p>');
-        return formatted;
+    function displaySpells(spells, isMarkdown = false) {
+        spellCardsContainer.innerHTML = '';
+        spells.forEach(spell => {
+            if (isMarkdown) {
+                spell = parseMarkdownSpell(spell);
+            }
+            const card = createSpellCard(spell);
+            spellCardsContainer.appendChild(card);
+        });
+        console.log(`Displayed ${spells.length} spells`);
     }
 
-    function insertSpellsIntoPages(spells) {
-        pagesContainer.innerHTML = ''; // Clear existing pages
+    function convertMarkdownToSpellObject(markdown) {
+        const spell = {};
+        const lines = markdown.split('\n');
+        let isDescription = false;
+        let currentSection = '';
 
-        // Add front cover
-        pagesContainer.innerHTML += `
-            <div class="page cover front-cover">
-                <h1>Spellbook</h1>
-            </div>`;
-
-        let currentPage = createNewPage();
-        let spellCount = 0;
-
-        spells.forEach(spell => {
-            const formattedSpell = formatSpell(spell);
-            const spellElement = document.createElement('div');
-            spellElement.classList.add('spell');
-            spellElement.innerHTML = formattedSpell;
-
-            pagesContainer.appendChild(spellElement);
-            const spellHeight = spellElement.offsetHeight;
-            pagesContainer.removeChild(spellElement);
-
-            if (spellCount < 2 && (currentPage.offsetHeight + spellHeight) <= pagesContainer.offsetHeight) {
-                currentPage.querySelector('.spell-content').innerHTML += formattedSpell + '<br><br>';
-                spellCount++;
-            } else {
-                currentPage = createNewPage();
-                currentPage.querySelector('.spell-content').innerHTML += formattedSpell + '<br><br>';
-                spellCount = 1;
+        lines.forEach(line => {
+            if (line.startsWith('#### ')) {
+                spell.name = line.replace('#### ', '').trim() || 'Unknown Spell';
+            } else if (line.includes('**Level:**')) {
+                spell.level = line.replace('**Level:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**School:**')) {
+                spell.school = line.replace('**School:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**Casting Time:**')) {
+                spell.casting_time = line.replace('**Casting Time:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**Range:**')) {
+                spell.range = line.replace('**Range:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**Duration:**')) {
+                spell.duration = line.replace('**Duration:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**Components:**')) {
+                spell.components = line.replace('**Components:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**Material:**')) {
+                spell.material = line.replace('**Material:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**Description:**')) {
+                spell.desc = line.replace('**Description:**', '').trim() || 'N/A';
+                isDescription = true;
+            } else if (line.includes('**Higher Level:**')) {
+                spell.higher_level = line.replace('**Higher Level:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**Concentration:**')) {
+                spell.concentration = line.replace('**Concentration:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**Ritual:**')) {
+                spell.ritual = line.replace('**Ritual:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**Attack Type:**')) {
+                spell.attack_type = line.replace('**Attack Type:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**Damage Type:**')) {
+                spell.damage_type = line.replace('**Damage Type:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**Damage at Slot Levels:**')) {
+                currentSection = 'damage_at_slot_levels';
+                spell[currentSection] = spell[currentSection] || '';
+                spell[currentSection] += line.replace('**Damage at Slot Levels:**', '').trim();
+                isDescription = false;
+            } else if (line.includes('**Classes:**')) {
+                spell.classes = line.replace('**Classes:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (line.includes('**Subclasses:**')) {
+                spell.subclasses = line.replace('**Subclasses:**', '').trim() || 'N/A';
+                isDescription = false;
+            } else if (isDescription) {
+                spell.desc += " " + line.trim();
+            } else if (currentSection === 'damage_at_slot_levels') {
+                spell[currentSection] += "\n" + line.trim();
             }
         });
 
-        // Add back cover
-        pagesContainer.innerHTML += `
-            <div class="page cover back-cover"></div>`;
-
-        initializeBook();
-    }
-
-    function createNewPage() {
-        const newPage = document.createElement('div');
-        newPage.classList.add('page');
-        newPage.innerHTML = '<div class="spell-content"></div>';
-        pagesContainer.appendChild(newPage);
-        return newPage;
-    }
-
-    function initializeBook() {
-        var pages = document.getElementsByClassName('page');
-        for (var i = 0; i < pages.length; i++) {
-            var page = pages[i];
-            if (i % 2 === 0) {
-                page.style.zIndex = (pages.length - i);
+        // Ensure all attributes are set
+        for (const key in spell) {
+            if (spell[key] === undefined || spell[key] === '') {
+                spell[key] = 'N/A';
             }
         }
 
-        for (var i = 0; i < pages.length; i++) {
-            pages[i].pageNum = i + 1;
-            pages[i].onclick = function () {
-                if (this.pageNum % 2 === 0) {
-                    this.classList.remove('flipped');
-                    this.previousElementSibling.classList.remove('flipped');
-                } else {
-                    this.classList.add('flipped');
-                    if (this.nextElementSibling) {
-                        this.nextElementSibling.classList.add('flipped');
-                    }
-                }
-                updateVisibility();
-            }
-        }
-
-        // Initial call to update visibility for the first page
-        updateVisibility();
+        return spell;
     }
 
-    function updateVisibility() {
-        var pages = document.getElementsByClassName('page');
-        for (var i = 0; i < pages.length; i++) {
-            if ((i % 2 === 0 && pages[i].classList.contains('flipped')) ||
-                (i % 2 !== 0 && !pages[i].classList.contains('flipped'))) {
-                pages[i].classList.add('show');
-            } else {
-                pages[i].classList.remove('show');
-            }
-        }
+    function createSpellCard(spell) {
+        const card = document.createElement('div');
+        card.classList.add('spell-card');
+        card.innerHTML = `
+        <h3 class="spell-title">${spell.name}</h3>
+        <p><strong>Level:</strong> ${spell.level}</p>
+        <p><strong>School:</strong> ${spell.school}</p>
+        <p><strong>Casting Time:</strong> ${spell.casting_time}</p>
+        <p><strong>Range:</strong> ${spell.range}</p>
+        <p><strong>Duration:</strong> ${spell.duration}</p>
+        <p><strong>Components:</strong> ${spell.components}</p>
+        <p><strong>Material:</strong> ${spell.material}</p>
+        <p><strong>Description:</strong> ${spell.desc}</p>
+        <p><strong>Higher Level:</strong> ${spell.higher_level}</p>
+        <p><strong>Concentration:</strong> ${spell.concentration}</p>
+        <p><strong>Ritual:</strong> ${spell.ritual}</p>
+        <p><strong>Attack Type:</strong> ${spell.attack_type}</p>
+        <p><strong>Damage Type:</strong> ${spell.damage_type}</p>
+        <p><strong>Damage at Slot Levels:</strong> ${spell.damage_at_slot_levels}</p>
+        <p><strong>Classes:</strong> ${spell.classes}</p>
+        <p><strong>Subclasses:</strong> ${spell.subclasses}</p>
+    `;
+        return card;
     }
 
-    document.getElementById('fileInput').addEventListener('change', handleFileSelect);
-});
+    function formatMultiLine(text) {
+        if (!text || text === 'N/A') return 'N/A';
+        return text.split('\n').map(line => line.trim()).join('<br>');
+    }
 
-// Drawing logic
-const canvas = document.getElementById('drawCanvas');
-const ctx = canvas.getContext('2d');
-let drawing = false;
-let clearTimeoutId;
-
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-canvas.addEventListener('mousedown', (event) => {
-    drawing = true;
-    ctx.beginPath();
-    clearTimeout(clearTimeoutId); // Clear previous timeout if any
-});
-canvas.addEventListener('mouseup', () => {
-    drawing = false;
-    clearTimeoutId = setTimeout(clearCanvas, 3000); // Clear canvas after 3 seconds
-});
-canvas.addEventListener('mousemove', draw);
-
-canvas.addEventListener('mouseleave', () => {
-    drawing = false; // Stop drawing if the mouse leaves the canvas
-});
-
-function draw(event) {
-    if (!drawing) return;
-
-    ctx.lineWidth = 5;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = '#A3865B';
-
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-}
-
-function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
 });
