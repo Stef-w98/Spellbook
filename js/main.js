@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const content = e.target.result;
                 console.log(`File content loaded`);
                 let spells = [];
-                if (file.name.endsWith('.json')) {
+                if (file.name.endsWith('.json') || file.name.endsWith('.spellbook')) {
                     try {
                         spells = JSON.parse(content);
                         console.log(`JSON parsed successfully`);
@@ -31,8 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         console.error(`Error parsing JSON: ${err}`);
                     }
                 }
-                allSpells = spells; // Store the loaded spells
-                displaySpells(allSpells);
+                displaySpells(spells);
             };
             reader.readAsText(file);
         }

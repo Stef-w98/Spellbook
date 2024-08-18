@@ -30,8 +30,8 @@ document.addEventListener('DOMContentLoaded', function () {
     exportJsonButton.addEventListener('click', function () {
         const spells = getSelectedSpells().map(spellToJson);
         const jsonContent = JSON.stringify(spells, null, 2);
-        const spellListName = spellListNameInput.value.trim() || 'spellbook'; // Default to 'spellbook' if no name is provided
-        downloadFile(`${spellListName}_spellbook.json`, jsonContent);
+        const spellListName = spellListNameInput.value.trim() || 'spells'; // Fallback to 'spells' if no name is provided
+        downloadFile(`${spellListName}.spellbook`, jsonContent); // Save as .spellbook extension
     });
 
     function addSpellToList(spell) {
