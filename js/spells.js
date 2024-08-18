@@ -92,26 +92,33 @@ document.addEventListener('DOMContentLoaded', function () {
         const newPage = document.createElement('div');
         newPage.classList.add('page');
         newPage.innerHTML = `
-            <h2>Search Spells</h2>
-            <input type="text" id="spellSearch" placeholder="Search spells">
-            <table id="spellTable">
-                <thead>
-                    <tr>
-                        <th data-column="name" class="sortable">Name <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
-                        <th data-column="level" class="sortable">Level <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
-                        <th data-column="school" class="sortable">School <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
-                        <th data-column="casting_time" class="sortable">Casting Time <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
-                        <th data-column="range" class="sortable">Range <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
-                        <th data-column="duration" class="sortable">Duration <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        `;
+        <h2>Search Spells</h2>
+        <input type="text" id="spellSearch" placeholder="Search spells">
+        <table id="spellTable">
+            <thead>
+                <tr>
+                    <th data-column="name" class="sortable">Name <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
+                    <th data-column="level" class="sortable">Level <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
+                    <th data-column="school" class="sortable">School <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
+                    <th data-column="casting_time" class="sortable">Casting Time <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
+                    <th data-column="range" class="sortable">Range <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
+                    <th data-column="duration" class="sortable">Duration <i class="sort-icon-up fas fa-sort-up"></i><i class="sort-icon-down fas fa-sort-down"></i></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    `;
         pagesContainer.appendChild(newPage);
 
         refreshTableBody(spells);
+
+        // Add search functionality
+        const spellSearchInput = document.getElementById('spellSearch');
+        spellSearchInput.addEventListener('input', function () {
+            const searchTerm = spellSearchInput.value.toLowerCase();
+            filterTableBySearchTerm(searchTerm, spells);
+        });
 
         document.querySelectorAll('#spellTable th.sortable').forEach(header => {
             header.addEventListener('click', function () {
@@ -128,6 +135,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 updateSortIcons(this, newOrder);
             });
         });
+    }
+
+    function filterTableBySearchTerm(searchTerm, spells) {
+        const filteredSpells = spells.filter(spell =>
+            spell.name.toLowerCase().includes(searchTerm)
+        );
+        refreshTableBody(filteredSpells);
     }
 
     function refreshTableBody(spells) {

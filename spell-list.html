@@ -28,12 +28,6 @@
         </div>
     </div>
 </nav>
-<div class="header">
-    <div class="tutorial">
-        <h2>Selecting Spells from 5etools</h2>
-        <p>Explore and select spells from the 5e API</p>
-    </div>
-</div>
 <div class="book-container">
     <div class="book">
         <div id="pages" class="pages"></div>
@@ -44,8 +38,9 @@
     <div id="loadingBar" class="ldBar" data-preset="energy" style="width: 80%; height: 20px;"></div>
     <div id="loadingPercentage" class="loading-percentage"></div>
 </div>
-<<div class="spell-list-container">
+<div class="spell-list-container">
     <h3>Selected Spells</h3>
+    <input type="text" id="spellListName" placeholder="Enter character name..." />
     <ul id="spellList"></ul>
     <button id="resetButton">Reset</button>
     <button id="exportJson">Save List</button>

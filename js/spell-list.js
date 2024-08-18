@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const spellList = document.getElementById('spellList');
     const resetButton = document.getElementById('resetButton');
     const exportJsonButton = document.getElementById('exportJson');
+    const spellListNameInput = document.getElementById('spellListName');
 
     document.addEventListener('click', async function (event) {
         if (event.target && event.target.classList.contains('add-spell-button')) {
@@ -29,7 +30,8 @@ document.addEventListener('DOMContentLoaded', function () {
     exportJsonButton.addEventListener('click', function () {
         const spells = getSelectedSpells().map(spellToJson);
         const jsonContent = JSON.stringify(spells, null, 2);
-        downloadFile('spells.json', jsonContent);
+        const spellListName = spellListNameInput.value.trim() || 'spellbook'; // Default to 'spellbook' if no name is provided
+        downloadFile(`${spellListName}_spellbook.json`, jsonContent);
     });
 
     function addSpellToList(spell) {

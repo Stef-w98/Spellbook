@@ -222,7 +222,7 @@ body {
 }
 
 .upload-button:hover {
-    background-color: #A0522D;
+    background-color: #4CAF50;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
 }
 
@@ -262,7 +262,7 @@ body {
 
 /* Navbar Styles */
 .navbar {
-    background-color: #4CAF50;
+    background-color: #2E8B57;
     height: 60px;
     display: flex;
     justify-content: center;
@@ -347,11 +347,11 @@ body {
         left: -100%;
         opacity: 1;
         transition: all 0.5s ease;
-        background-color: #4CAF50;
+        background-color: #2E8B57;
     }
 
     .navbar-menu.active {
-        background: #4CAF50;
+        background: #2E8B57;
         left: 0;
         opacity: 1;
         transition: all 0.5s ease;

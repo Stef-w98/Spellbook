@@ -7,7 +7,7 @@ body {
 }
 
 .header {
-    background-color: #4CAF50;
+    background-color: #2E8B57;
     color: white;
     text-align: center;
     padding: 1em 0;
@@ -70,7 +70,7 @@ th, td {
 }
 
 th {
-    background-color: #4CAF50;
+    background-color: #2E8B57;
     color: white;
     position: relative;
     cursor: pointer;
@@ -99,10 +99,14 @@ th.sorted.desc .sort-icon-up {
 td button {
     padding: 0.25em 0.5em;
     color: #fff;
-    background-color: #4CAF50;
+    background-color: #2E8B57;
     border: none;
     cursor: pointer;
     border-radius: 4px;
+}
+
+td button:hover {
+    background-color: #4CAF50;
 }
 
 td button:disabled {

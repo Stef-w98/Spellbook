@@ -1,6 +1,6 @@
 /* Navbar Styles */
 .navbar {
-    background-color: #4CAF50;
+    background-color: #2E8B57;
     height: 60px;
     display: flex;
     justify-content: center;
@@ -85,7 +85,7 @@
         left: -100%;
         opacity: 1;
         transition: all 0.5s ease;
-        background-color: #4CAF50;
+        background-color: #2E8B57;
     }
 
     .navbar-menu.active {
@@ -126,11 +126,11 @@
     padding: 0.5rem 1rem;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #4CAF50;
+    background-color: #2E8B57;
     color: white;
     cursor: pointer;
 }
 
 .filter-button.active {
-    background-color: #2E8B57; /* Active state color */
+    background-color: #4CAF50; /* Active state color */
 }
