@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const spellList = document.getElementById('spellList');
     const resetButton = document.getElementById('resetButton');
-    const exportMarkdownButton = document.getElementById('exportMarkdown');
     const exportJsonButton = document.getElementById('exportJson');
 
     document.addEventListener('click', async function (event) {
@@ -21,12 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     resetButton.addEventListener('click', function () {
         spellList.innerHTML = '';
-    });
-
-    exportMarkdownButton.addEventListener('click', function () {
-        const spells = getSelectedSpells();
-        const markdownContent = spells.map(spellToMarkdown).join('\n\n');
-        downloadFile('spells.md', markdownContent);
     });
 
     exportJsonButton.addEventListener('click', function () {
@@ -96,30 +89,6 @@ document.addEventListener('DOMContentLoaded', function () {
             classes: spell.classes,
             subclasses: spell.subclasses,
         };
-    }
-
-    function spellToMarkdown(spell) {
-        const fields = [
-            `#### ${spell.name}`,
-            `**Level:** ${spell.level}`,
-            `**School:** ${spell.school}`,
-            `**Casting Time:** ${spell.casting_time}`,
-            `**Range:** ${spell.range}`,
-            `**Duration:** ${spell.duration || 'N/A'}`,
-            `**Components:** ${spell.components || 'N/A'}`,
-            `**Material:** ${spell.material || 'N/A'}`,
-            `**Description:** ${spell.desc || 'N/A'}`,
-            `**Higher Level:** ${spell.higher_level || 'N/A'}`,
-            `**Concentration:** ${spell.concentration !== undefined ? spell.concentration : 'N/A'}`,
-            `**Ritual:** ${spell.ritual !== undefined ? spell.ritual : 'N/A'}`,
-            `**Attack Type:** ${spell.attack_type || 'N/A'}`,
-            `**Damage Type:** ${spell.damage_type || 'N/A'}`,
-            `**Damage at Slot Levels:** ${spell.damage_at_slot_levels || 'N/A'}`,
-            `**Classes:** ${spell.classes || 'N/A'}`,
-            `**Subclasses:** ${spell.subclasses || 'N/A'}`,
-        ];
-
-        return fields.join('\n\n');
     }
 
     function formatDamageAtSlotLevels(damageAtSlotLevel) {
