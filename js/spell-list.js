@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('click', async function (event) {
         if (event.target && event.target.classList.contains('add-spell-button')) {
             const spellName = event.target.dataset.spellName;
+            if (isSpellInList(spellName)) {
+                alert('This spell is already in your list!');
+                return; // Prevent adding the spell again
+            }
             const spellDetails = await fetchSpellDetails(spellName); // Fetch full details
             if (spellDetails) {
                 addSpellToList(spellDetails); // Pass the full details to add to the list
@@ -14,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (event.target && event.target.classList.contains('remove-spell-button')) {
             const spellItem = event.target.parentElement;
-            spellList.removeChild(spellItem);
+            spellList.removeChild(spellItem);  // Remove the spell item from the list
         }
     });
 
@@ -94,6 +98,11 @@ document.addEventListener('DOMContentLoaded', function () {
     function formatDamageAtSlotLevels(damageAtSlotLevel) {
         if (!damageAtSlotLevel) return 'None';
         return Object.entries(damageAtSlotLevel).map(([level, damage]) => `Level ${level}: ${damage}`).join('\n');
+    }
+
+    function isSpellInList(spellName) {
+        const spellItems = spellList.querySelectorAll('li span');
+        return Array.from(spellItems).some(span => span.textContent === spellName);
     }
 
     function downloadFile(filename, content) {
