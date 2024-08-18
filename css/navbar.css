@@ -100,3 +100,37 @@
         display: block;
     }
 }
+
+.filter-bar {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 60px; /* Adjust if needed to position below navbar */
+}
+
+.filter-bar input {
+    padding: 0.5rem;
+    margin-right: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.spell-filters {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+.filter-button.active {
+    background-color: #2E8B57; /* Active state color */
+}
