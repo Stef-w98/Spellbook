@@ -3,7 +3,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f9;
+    background-color: #ffffff;
     color: #333;
 }
 
@@ -226,10 +226,6 @@ body {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
 }
 
-/* New styles for tutorial and quill cursor */
-body {
-    cursor: url('http://www.rw-designer.com/cursor-extern.php?id=43415'), auto;
-}
 .page:nth-child(odd){
     background-position: right top;
 }
