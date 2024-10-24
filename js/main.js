@@ -1,12 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const spellList = document.getElementById('spellList');
-    const resetButton = document.getElementById('resetButton');
-    const exportJsonButton = document.getElementById('exportJson');
-    const spellListNameInput = document.getElementById('spellListName');
-    const spellSlotsContainer = document.getElementById('spellSlotsContainer');
-    const fileInput = document.getElementById('fileInput');
     const spellCardsContainer = document.getElementById('spellCardsContainer');
+    const fileInput = document.getElementById('fileInput');
     const searchInput = document.getElementById('searchSpells');
+    const spellSlotsContainer = document.getElementById('spellSlotsContainer');
     let allSpells = []; // Store all spells after parsing
 
     // Create prepared filter button
@@ -15,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     preparedFilterButton.classList.add('filter-button', 'prepared-filter-button');
     document.querySelector('.spell-filters').appendChild(preparedFilterButton);
 
+    // Event Listeners
     fileInput.addEventListener('change', handleFileUpload);
     searchInput.addEventListener('input', filterSpells);
     preparedFilterButton.addEventListener('click', function () {
@@ -48,8 +45,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         resetFilters(); // Reset any active filters after loading
                     } catch (err) {
                         console.error(`Error parsing JSON: ${err}`);
+                        alert('Error parsing the spellbook file. Please ensure it is a valid .spellbook file.');
                         return;
                     }
+                } else {
+                    alert('Unsupported file format. Please upload a .spellbook file.');
                 }
             };
             reader.readAsText(file);
@@ -59,17 +59,16 @@ document.addEventListener('DOMContentLoaded', function () {
     function resetFilters() {
         searchInput.value = ''; // Clear search box
         document.querySelectorAll('.filter-button').forEach(button => button.classList.remove('active')); // Remove active state from filter buttons
-        filterSpells(); // Reapply filters, if any
+        filterSpells(); // Reapply filters
     }
 
     function displaySpells(spells) {
         spellCardsContainer.innerHTML = '';
-        spells.sort((a, b) => a.level - b.level); // Sort by level, Cantrips first
+        spells.sort((a, b) => a.level - b.level || a.name.localeCompare(b.name)); // Sort by level, then name
         spells.forEach(spell => {
             const card = createSpellCard(spell);
             spellCardsContainer.appendChild(card);
         });
-        console.log(`Displayed ${spells.length} spells`);
     }
 
     function filterSpells() {
@@ -94,24 +93,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const card = document.createElement('div');
         card.classList.add('spell-card');
         card.innerHTML = `
-        <h3 class="spell-title">${spell.name}</h3>
-        <p><strong>Level:</strong> ${spell.level}</p>
-        <p><strong>School:</strong> ${spell.school}</p>
-        <p><strong>Casting Time:</strong> ${spell.casting_time}</p>
-        <p><strong>Range:</strong> ${spell.range}</p>
-        <p><strong>Duration:</strong> ${spell.duration}</p>
-        <p><strong>Components:</strong> ${spell.components}</p>
-        <p><strong>Material:</strong> ${spell.material}</p>
-        <p><strong>Description:</strong> ${spell.desc}</p>
-        <p><strong>Higher Level:</strong> ${spell.higher_level}</p>
-        <p><strong>Concentration:</strong> ${spell.concentration}</p>
-        <p><strong>Ritual:</strong> ${spell.ritual}</p>
-        <p><strong>Attack Type:</strong> ${spell.attack_type}</p>
-        <p><strong>Damage Type:</strong> ${spell.damage_type}</p>
-        <p><strong>Damage at Slot Levels:</strong> ${spell.damage_at_slot_levels}</p>
-        <p><strong>Classes:</strong> ${spell.classes}</p>
-        <p><strong>Subclasses:</strong> ${spell.subclasses}</p>
-    `;
+            <h3 class="spell-title">${spell.name}</h3>
+            <p><strong>Level:</strong> ${spell.level}</p>
+            <p><strong>School:</strong> ${spell.school}</p>
+            <p><strong>Casting Time:</strong> ${spell.casting_time}</p>
+            <p><strong>Range:</strong> ${spell.range}</p>
+            <p><strong>Duration:</strong> ${spell.duration}</p>
+            <p><strong>Components:</strong> ${spell.components}</p>
+            <p><strong>Material:</strong> ${spell.material}</p>
+            <p><strong>Description:</strong> ${spell.desc}</p>
+            ${spell.higher_level ? `<p><strong>Higher Level:</strong> ${spell.higher_level}</p>` : ''}
+            <p><strong>Concentration:</strong> ${spell.concentration}</p>
+            <p><strong>Ritual:</strong> ${spell.ritual}</p>
+            ${spell.attack_type ? `<p><strong>Attack Type:</strong> ${spell.attack_type}</p>` : ''}
+            ${spell.damage_type ? `<p><strong>Damage Type:</strong> ${spell.damage_type}</p>` : ''}
+            ${spell.damage_at_slot_levels ? `<p><strong>Damage at Slot Levels:</strong> ${spell.damage_at_slot_levels}</p>` : ''}
+            <p><strong>Classes:</strong> ${spell.classes}</p>
+            ${spell.subclasses ? `<p><strong>Subclasses:</strong> ${spell.subclasses}</p>` : ''}
+        `;
 
         if (spell.prepared) {
             const preparedIcon = document.createElement('span');
@@ -140,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Create checkboxes in a row
                 const checkboxesContainer = document.createElement('span');
-                checkboxesContainer.classList.add('checkboxes-container');
+                checkboxesContainer.classList.add('checkboxes-container', 'checkbox-round');
 
                 for (let i = 0; i < numSlots; i++) {
                     const checkbox = document.createElement('input');
@@ -148,27 +147,30 @@ document.addEventListener('DOMContentLoaded', function () {
                     checkbox.classList.add('spell-slot-checkbox');
                     checkbox.dataset.level = level;
                     checkbox.dataset.index = i;
+
+                    // Initially disable all checkboxes except the first one
+                    if (i !== 0) {
+                        checkbox.disabled = true;
+                    }
+
                     checkbox.addEventListener('change', function () {
+                        const index = parseInt(checkbox.dataset.index, 10);
+                        const checkboxes = checkboxesContainer.querySelectorAll('.spell-slot-checkbox');
+
                         if (checkbox.checked) {
-                            // Ensure all previous checkboxes are checked
-                            for (let j = 0; j < i; j++) {
-                                const prevCheckbox = checkboxesContainer.querySelector(`[data-index="${j}"]`);
-                                if (!prevCheckbox.checked) {
-                                    checkbox.checked = false;
-                                    break;
-                                }
+                            // Enable the next checkbox if it exists
+                            if (checkboxes[index + 1]) {
+                                checkboxes[index + 1].disabled = false;
                             }
                         } else {
-                            // Ensure you can only uncheck from the last one
-                            for (let j = i + 1; j < numSlots; j++) {
-                                const nextCheckbox = checkboxesContainer.querySelector(`[data-index="${j}"]`);
-                                if (nextCheckbox.checked) {
-                                    checkbox.checked = true;
-                                    break;
-                                }
+                            // Uncheck and disable all following checkboxes
+                            for (let j = index + 1; j < checkboxes.length; j++) {
+                                checkboxes[j].checked = false;
+                                checkboxes[j].disabled = true;
                             }
                         }
                     });
+
                     checkboxesContainer.appendChild(checkbox);
                 }
 
@@ -183,9 +185,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // Create a reset button to clear checkboxes
         const resetSlotsButton = document.createElement('button');
         resetSlotsButton.textContent = 'Reset Slots';
+        resetSlotsButton.classList.add('filter-button');
         resetSlotsButton.addEventListener('click', function () {
             const checkboxes = document.querySelectorAll('.spell-slot-checkbox');
-            checkboxes.forEach(checkbox => checkbox.checked = false);
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.checked = false;
+                checkbox.disabled = index !== 0;
+            });
         });
 
         spellSlotsContainer.appendChild(resetSlotsButton);
@@ -206,9 +212,5 @@ document.addEventListener('DOMContentLoaded', function () {
             levelButton.dataset.level = level;
             spellFiltersContainer.insertBefore(levelButton, preparedFilterButton);
         });
-    }
-
-    function loadSpellSlots(spellSlots) {
-        createSpellSlotInputs(spellSlots);
     }
 });

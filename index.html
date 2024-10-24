@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Meta and Title -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spellbook</title>
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/modern-index-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -24,61 +27,69 @@
         </div>
     </div>
 </nav>
+
+<!-- Header Section -->
 <div class="header">
     <div class="tutorial">
         <i class="fas fa-info-circle info-button" id="infoButton"></i>
     </div>
 </div>
+
+<!-- Filter Bar -->
 <div class="filter-bar">
     <input type="text" id="searchSpells" placeholder="Search spells..." />
-    <div class="spell-filters"></div>
+    <div class="spell-filters">
+        <!-- Filter buttons will be dynamically added here -->
+    </div>
 </div>
+
+<!-- Spell Slots Container -->
 <div id="spellSlotsContainer"></div>
-<div class="book-container">
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Spell Cards Container -->
     <div id="spellCardsContainer" class="spell-cards-container">
         <!-- Cards will be dynamically inserted here -->
     </div>
 </div>
+
+<!-- Upload Button -->
 <label for="fileInput" class="upload-button">Upload Spell List</label>
-<input type="file" id="fileInput" accept=".spellbook" style="display: none;"/>
+<input type="file" id="fileInput" accept=".spellbook" style="display: none;" />
+
 <!-- Popup Modal for Tutorial -->
 <div id="infoModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Selecting Spells from 5etools</h2>
         <p>
-            1. Open your web browser and go to <a href="https://5etools.com/" target="_blank">5etools</a>. <br>
-            2. Navigate to the "Spells" section. <br>
-            3. Browse through the spells and pin the ones you want to include in your spellbook by clicking the pin icon next to each spell. <br>
-            4. Once you have pinned all your desired spells, go to "Book View" under your spell. <br>
-            5. Click on the "Download as Markdown" button to download your list. <br>
+            1. Open your web browser and go to <a href="https://5etools.com/" target="_blank">5etools</a>.<br>
+            2. Navigate to the "Spells" section.<br>
+            3. Browse through the spells and pin the ones you want to include in your spellbook by clicking the pin icon next to each spell.<br>
+            4. Once you have pinned all your desired spells, go to "Book View" under your spell.<br>
+            5. Click on the "Download as Markdown" button to download your list.<br>
             6. Upload the list as a .md file.
         </p>
     </div>
 </div>
 
+<!-- Scripts -->
 <script src="js/main.js"></script>
 <script>
-    // Get the modal
+    // Modal functionality
     var modal = document.getElementById("infoModal");
-
-    // Get the button that opens the modal
     var btn = document.getElementById("infoButton");
-
-    // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
 
-    // When the user clicks the button, open the modal
     btn.onclick = function() {
         modal.style.display = "block";
     }
 
-    // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
         modal.style.display = "none";
     }
 
-    // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";

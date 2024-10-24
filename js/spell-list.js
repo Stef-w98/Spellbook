@@ -42,24 +42,62 @@ document.addEventListener('DOMContentLoaded', function () {
     function createSpellSlotInputs() {
         const spellSlotsDiv = document.createElement('div');
         spellSlotsDiv.id = 'spellSlots';
+
+        // Define the maximum spell slots per level
+        const maxSpellSlots = {
+            1: 4,
+            2: 3,
+            3: 3,
+            4: 3,
+            5: 3,
+            6: 2,
+            7: 2,
+            8: 1,
+            9: 1
+        };
+
         for (let level = 1; level <= 9; level++) {
             const slotDiv = document.createElement('div');
             slotDiv.classList.add('spell-slot');
             slotDiv.innerHTML = `
                 <label>Level ${level} Spell Slots: 
-                    <input type="number" min="0" id="spellSlotLevel${level}" value="0">
+                    <input type="number" min="0" max="${maxSpellSlots[level]}" id="spellSlotLevel${level}" value="0">
                 </label>
             `;
             spellSlotsDiv.appendChild(slotDiv);
         }
         spellSlotsContainer.appendChild(spellSlotsDiv);
+
+        // Add event listeners to enforce max values
+        for (let level = 1; level <= 9; level++) {
+            const slotInput = document.getElementById(`spellSlotLevel${level}`);
+            const maxSlots = maxSpellSlots[level];
+
+            slotInput.addEventListener('input', function () {
+                let value = parseInt(slotInput.value, 10) || 0;
+                if (value > maxSlots) {
+                    slotInput.value = maxSlots;
+                } else if (value < 0) {
+                    slotInput.value = 0;
+                }
+            });
+        }
     }
 
     function getSpellSlots() {
         const spellSlots = {};
         for (let level = 1; level <= 9; level++) {
             const slotInput = document.getElementById(`spellSlotLevel${level}`);
-            spellSlots[`level${level}`] = parseInt(slotInput.value, 10) || 0;
+            const maxSlots = parseInt(slotInput.max, 10); // Get the max allowed slots for this level
+            let value = parseInt(slotInput.value, 10) || 0;
+
+            // Ensure the value does not exceed the maximum
+            if (value > maxSlots) {
+                value = maxSlots;
+                slotInput.value = maxSlots; // Update the input field to the max value
+            }
+
+            spellSlots[`level${level}`] = value;
         }
         return spellSlots;
     }
@@ -68,7 +106,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const spellItem = document.createElement('li');
         spellItem.innerHTML = `
             <span>${spell.name}</span>
-            <input type="checkbox" class="prepared-checkbox" data-spell-name="${spell.name}" /> Prepared
+            <div>
+                <input type="checkbox" id="prepared-${spell.name}" class="prepared-checkbox" data-spell-name="${spell.name}" />
+                <label for="prepared-${spell.name}">Prepared</label>
+            </div>
             <button class="remove-spell-button">Remove</button>
         `;
         spellItem.dataset.spell = JSON.stringify(spell); // Store the full spell details in the element's data

@@ -1,79 +1,332 @@
-.spell-list-container {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    width: 200px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    max-height: 50vh;
-    overflow-y: auto;
-    z-index: 1000;
+/* CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+/* Root variables */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --light-color: #ecf0f1;
+    --dark-color: #34495e;
+    --background-color: #f4f4f4;
+}
+
+/* Body styles */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--dark-color);
+}
+
+/* Navbar styles */
+.navbar {
+    background-color: var(--secondary-color);
+    color: var(--light-color);
+    padding: 1rem;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-logo {
+    color: var(--light-color);
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.navbar-menu {
+    list-style: none;
+    display: flex;
+    margin-left: auto;
+}
+
+.navbar-menu li {
+    margin-left: 1.5rem;
+}
+
+.navbar-menu a {
+    color: var(--light-color);
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.navbar-menu a:hover {
+    color: var(--primary-color);
+}
+
+/* Mobile menu */
+.navbar-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.navbar-toggle .bar {
+    height: 3px;
+    width: 25px;
+    background-color: var(--light-color);
+    margin: 4px 0;
+    transition: 0.4s;
+}
+
+@media (max-width: 768px) {
+    .navbar-menu {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: var(--secondary-color);
+    }
+    .navbar-menu.active {
+        display: flex;
+    }
+    .navbar-menu li {
+        margin: 0;
+        text-align: center;
+        padding: 1rem 0;
+    }
+    .navbar-toggle {
+        display: flex;
+    }
+}
+
+/* Main content flex container */
+.main-content {
+    display: flex;
+    flex-direction: row;
+}
+
+/* Adjust book-container */
+.book-container {
+    flex: 1;
+    max-width: calc(100% - 320px); /* Adjusted for spell list width and padding */
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Adjust spell-list-container */
+.spell-list-container {
+    width: 300px;
+    position: sticky;
+    top: 0; /* Adjust if you have a fixed navbar */
+    height: 100vh;
+    overflow-y: auto;
+    background-color: #fff; /* Optional */
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1); /* Optional */
+    padding: 1.5rem;
+}
+
+/* Spell table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+table thead {
+    background-color: var(--dark-color);
+}
+
+table thead th {
+    color: var(--light-color);
+    padding: 0.75rem;
+    text-align: left;
+    position: relative;
+    cursor: pointer;
+}
+
+table th, table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table tr:nth-child(even) {
+    background-color: var(--light-color);
+}
+
+th.sortable .sort-icon-up, th.sortable .sort-icon-down {
+    position: absolute;
+    right: 0.5rem;
+    opacity: 0.3;
+    font-size: 0.75rem;
+}
+
+th.sorted.asc .sort-icon-up {
+    opacity: 1;
+}
+
+th.sorted.desc .sort-icon-down {
+    opacity: 1;
+}
+
+/* Search input */
+#spellSearch {
+    width: 100%;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Buttons */
+button {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+.add-spell-button {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Spell list container */
 .spell-list-container h3 {
-    margin-top: 0;
-    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.spell-list-container input[type="text"] {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .spell-list-container ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
 }
 
 .spell-list-container li {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 5px;
-    padding: 5px;
-    border: 1px solid #ddd;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.spell-list-container li:last-child {
+    border-bottom: none;
+}
+
+.spell-list-container .prepared-checkbox {
+    margin-right: 1rem;
+}
+
+.spell-list-container .remove-spell-button {
+    background-color: #e74c3c;
+    transition: background-color 0.3s ease;
+}
+
+.spell-list-container .remove-spell-button:hover {
+    background-color: #c0392b;
+}
+
+/* Spell slots */
+#spellSlotsContainer {
+    margin-bottom: 1rem;
+}
+
+#spellSlotsContainer h3 {
+    margin-bottom: 0.5rem;
+}
+
+.spell-slot {
+    margin-bottom: 0.5rem;
+}
+
+.spell-slot label {
+    display: flex;
+    align-items: center;
+}
+
+.spell-slot input[type="number"] {
+    width: 60px;
+    padding: 0.25rem;
+    margin-left: 0.5rem;
+    border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-.spell-list-container li button {
-    padding: 0.25em 0.5em;
-    color: #fff;
-    background-color: #ff0000;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
+/* Loading bar */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 40vh;
 }
 
-#resetButton {
-    width: 100%;
-    padding: 0.5em;
+.loading-percentage {
     margin-top: 10px;
-    background-color: #ff0000;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    font-size: 1.5em;
+    color: #333;
 }
 
-.spell-name {
-    cursor: pointer;
+.ldBar-label {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
 }
 
-.spell-name:hover {
-    text-decoration: underline;
-}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
 
-#exportJson {
-    width: 100%;
-    padding: 0.5em;
-    margin-top: 10px;
-    background-color: #2E8B57; /* Green background */
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1em;
-}
+    .spell-list-container {
+        width: 100%;
+        position: relative;
+        top: auto;
+        height: auto;
+        overflow-y: visible;
+        margin-top: 2rem;
+    }
 
-#exportJson:hover {
-    background-color: #4CAF50; /* Darker green on hover */
+    /* Adjust book-container */
+    .book-container {
+        max-width: 100%;
+    }
+
+    table th, table td {
+        padding: 0.5rem;
+    }
+
+    .spell-list-container input[type="text"] {
+        padding: 0.5rem;
+    }
+
+    button {
+        padding: 0.5rem;
+    }
+
+    .spell-list-container li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .spell-list-container .remove-spell-button {
+        margin-top: 0.5rem;
+    }
 }

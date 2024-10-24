@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Meta and Title -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spell List</title>
+
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="css/navbar.css">
-    <link rel="stylesheet" href="css/spelltable.css">
     <link rel="stylesheet" href="css/spell-list.css">
     <link rel="stylesheet" href="css/spell-modal.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- Loading Bar Styles -->
     <link rel="stylesheet" type="text/css" href="Loadingbar/loading-bar.css"/>
+
+    <!-- Scripts -->
     <script type="text/javascript" src="Loadingbar/loading-bar.js"></script>
 </head>
 <body>
@@ -28,29 +34,39 @@
         </div>
     </div>
 </nav>
-<div class="book-container">
-    <div class="book">
-        <div id="pages" class="pages"></div>
-    </div>
-</div>
-<!-- Progress Bar Container -->
-<div id="loadingContainer" class="loading-container">
-    <div id="loadingBar" class="ldBar" data-preset="energy" style="width: 80%; height: 20px;"></div>
-    <div id="loadingPercentage" class="loading-percentage"></div>
-</div>
-<div class="spell-list-container">
-    <h3>Selected Spells</h3>
-    <input type="text" id="spellListName" placeholder="Enter character name..." />
-    <div id="spellSlotsContainer">
-        <h3>Spell Slots</h3>
-        <div id="spellSlots">
-            <!-- Spell slot inputs will be dynamically generated here -->
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Book Container -->
+    <div class="book-container">
+        <div class="book">
+            <div id="pages" class="pages"></div>
+        </div>
+
+        <!-- Progress Bar Container -->
+        <div id="loadingContainer" class="loading-container">
+            <div id="loadingBar" class="ldBar" data-preset="energy" style="width: 80%; height: 20px;"></div>
+            <div id="loadingPercentage" class="loading-percentage"></div>
         </div>
     </div>
-    <ul id="spellList"></ul>
-    <button id="resetButton">Reset</button>
-    <button id="exportJson">Save List</button>
+
+    <!-- Spell List Container -->
+    <div class="spell-list-container">
+        <h3>Selected Spells</h3>
+        <input type="text" id="spellListName" placeholder="Enter character name..." />
+        <div id="spellSlotsContainer">
+            <h3>Spell Slots</h3>
+            <div id="spellSlots">
+                <!-- Spell slot inputs will be dynamically generated here -->
+            </div>
+        </div>
+        <ul id="spellList"></ul>
+        <button id="resetButton">Reset</button>
+        <button id="exportJson">Save List</button>
+    </div>
 </div>
+
+<!-- Scripts -->
 <script src="js/spells.js"></script>
 <script src="js/spell-list.js"></script>
 <script src="js/spell-modal.js"></script>
