@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const fileInput = document.getElementById('fileInput');
     const spellCardsContainer = document.getElementById('spellCardsContainer');
     const searchInput = document.getElementById('searchSpells');
-    const filterButtons = document.querySelectorAll('.filter-button');
     let allSpells = []; // Store all spells after parsing
 
     // Create prepared filter button
@@ -18,14 +17,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fileInput.addEventListener('change', handleFileUpload);
     searchInput.addEventListener('input', filterSpells);
+    preparedFilterButton.addEventListener('click', function () {
+        preparedFilterButton.classList.toggle('active');
+        filterSpells();
+    });
 
     document.querySelector('.spell-filters').addEventListener('click', function(event) {
-        if (event.target.classList.contains('filter-button')) {
-            if (event.target.classList.contains('prepared-filter-button')) {
-                event.target.classList.toggle('active');
-            } else {
-                event.target.classList.toggle('active');
-            }
+        if (event.target.classList.contains('level-filter')) {
+            event.target.classList.toggle('active');
             filterSpells();
         }
     });
@@ -45,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         allSpells = spells; // Update the allSpells array
                         createSpellSlotInputs(spellSlots); // Ensure spell slots inputs are created
                         displaySpells(spells);
+                        createFilterButtons(spells); // Create filter buttons based on spells
                         resetFilters(); // Reset any active filters after loading
                     } catch (err) {
                         console.error(`Error parsing JSON: ${err}`);
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function resetFilters() {
         searchInput.value = ''; // Clear search box
-        filterButtons.forEach(button => button.classList.remove('active')); // Remove active state from filter buttons
+        document.querySelectorAll('.filter-button').forEach(button => button.classList.remove('active')); // Remove active state from filter buttons
         filterSpells(); // Reapply filters, if any
     }
 
@@ -74,8 +74,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function filterSpells() {
         const searchTerm = searchInput.value.toLowerCase();
-        const activeLevels = Array.from(filterButtons)
-            .filter(button => button.classList.contains('active') && !button.classList.contains('prepared-filter-button'))
+        const activeLevels = Array.from(document.querySelectorAll('.filter-button.level-filter'))
+            .filter(button => button.classList.contains('active'))
             .map(button => parseInt(button.dataset.level));
 
         const preparedOnly = preparedFilterButton.classList.contains('active');
@@ -189,6 +189,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         spellSlotsContainer.appendChild(resetSlotsButton);
+    }
+
+    function createFilterButtons(spells) {
+        // Remove existing level filter buttons
+        document.querySelectorAll('.filter-button.level-filter').forEach(button => button.remove());
+
+        // Create level filter buttons based on available spells
+        const levels = [...new Set(spells.map(spell => spell.level))].sort((a, b) => a - b);
+        const spellFiltersContainer = document.querySelector('.spell-filters');
+
+        levels.forEach(level => {
+            const levelButton = document.createElement('button');
+            levelButton.textContent = `Level ${level}`;
+            levelButton.classList.add('filter-button', 'level-filter');
+            levelButton.dataset.level = level;
+            spellFiltersContainer.insertBefore(levelButton, preparedFilterButton);
+        });
     }
 
     function loadSpellSlots(spellSlots) {
