@@ -92,25 +92,34 @@ document.addEventListener('DOMContentLoaded', function () {
     function createSpellCard(spell) {
         const card = document.createElement('div');
         card.classList.add('spell-card');
+
+        // Truncate the description to 200 characters
+        const truncatedDesc = spell.desc.length > 200 ? spell.desc.substring(0, 200) + '...' : spell.desc;
+        const needsReadMore = spell.desc.length > 200;
+
         card.innerHTML = `
-            <h3 class="spell-title">${spell.name}</h3>
-            <p><strong>Level:</strong> ${spell.level}</p>
-            <p><strong>School:</strong> ${spell.school}</p>
-            <p><strong>Casting Time:</strong> ${spell.casting_time}</p>
-            <p><strong>Range:</strong> ${spell.range}</p>
-            <p><strong>Duration:</strong> ${spell.duration}</p>
-            <p><strong>Components:</strong> ${spell.components}</p>
-            <p><strong>Material:</strong> ${spell.material}</p>
-            <p><strong>Description:</strong> ${spell.desc}</p>
-            ${spell.higher_level ? `<p><strong>Higher Level:</strong> ${spell.higher_level}</p>` : ''}
-            <p><strong>Concentration:</strong> ${spell.concentration}</p>
-            <p><strong>Ritual:</strong> ${spell.ritual}</p>
-            ${spell.attack_type ? `<p><strong>Attack Type:</strong> ${spell.attack_type}</p>` : ''}
-            ${spell.damage_type ? `<p><strong>Damage Type:</strong> ${spell.damage_type}</p>` : ''}
-            ${spell.damage_at_slot_levels ? `<p><strong>Damage at Slot Levels:</strong> ${spell.damage_at_slot_levels}</p>` : ''}
-            <p><strong>Classes:</strong> ${spell.classes}</p>
-            ${spell.subclasses ? `<p><strong>Subclasses:</strong> ${spell.subclasses}</p>` : ''}
-        `;
+        <h3 class="spell-title">${spell.name}</h3>
+        <p><strong>Level:</strong> ${spell.level}</p>
+        <p><strong>School:</strong> ${spell.school}</p>
+        <p><strong>Casting Time:</strong> ${spell.casting_time}</p>
+        <p><strong>Range:</strong> ${spell.range}</p>
+        <p><strong>Duration:</strong> ${spell.duration}</p>
+        <p><strong>Components:</strong> ${spell.components}</p>
+        <p><strong>Material:</strong> ${spell.material}</p>
+        <p><strong>Description:</strong> <span class="spell-description">
+            <span class="truncated">${truncatedDesc}</span>
+            <span class="full">${spell.desc}</span>
+        </span></p>
+        ${needsReadMore ? `<button class="read-more-button">Read More</button>` : ''}
+        ${spell.higher_level ? `<p><strong>Higher Level:</strong> ${spell.higher_level}</p>` : ''}
+        <p><strong>Concentration:</strong> ${spell.concentration}</p>
+        <p><strong>Ritual:</strong> ${spell.ritual}</p>
+        ${spell.attack_type ? `<p><strong>Attack Type:</strong> ${spell.attack_type}</p>` : ''}
+        ${spell.damage_type ? `<p><strong>Damage Type:</strong> ${spell.damage_type}</p>` : ''}
+        ${spell.damage_at_slot_levels ? `<p><strong>Damage at Slot Levels:</strong> ${spell.damage_at_slot_levels}</p>` : ''}
+        <p><strong>Classes:</strong> ${spell.classes}</p>
+        ${spell.subclasses ? `<p><strong>Subclasses:</strong> ${spell.subclasses}</p>` : ''}
+    `;
 
         if (spell.prepared) {
             const preparedIcon = document.createElement('span');
@@ -118,6 +127,28 @@ document.addEventListener('DOMContentLoaded', function () {
             preparedIcon.innerHTML = '&#9733;'; // Star icon
             preparedIcon.title = 'Prepared Spell';
             card.appendChild(preparedIcon);
+        }
+
+        // Add event listener for the Read More button
+        if (needsReadMore) {
+            const readMoreButton = card.querySelector('.read-more-button');
+            const truncatedDescElement = card.querySelector('.truncated');
+            const fullDescElement = card.querySelector('.full');
+
+            // Initially hide the full description
+            fullDescElement.style.display = 'none';
+
+            readMoreButton.addEventListener('click', function () {
+                if (readMoreButton.textContent === 'Read More') {
+                    truncatedDescElement.style.display = 'none';
+                    fullDescElement.style.display = 'inline';
+                    readMoreButton.textContent = 'Read Less';
+                } else {
+                    truncatedDescElement.style.display = 'inline';
+                    fullDescElement.style.display = 'none';
+                    readMoreButton.textContent = 'Read More';
+                }
+            });
         }
 
         return card;

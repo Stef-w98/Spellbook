@@ -5,28 +5,94 @@
     box-sizing: border-box;
 }
 
-/* Root variables */
+/* Root variables for themes */
 :root {
+    /* Light Theme Colors */
     --primary-color: #3498db;
     --secondary-color: #2c3e50;
-    --light-color: #ecf0f1;
-    --dark-color: #34495e;
     --background-color: #f4f4f4;
     --card-background: #fff;
     --card-border: #ddd;
+    --text-color: #34495e;
+    --link-color: #2c3e50;
+    --link-hover-color: #3498db;
+    --upload-button-background: #3498db;
+    --upload-button-hover: #2980b9;
+    --prepared-icon-color: gold;
+    --modal-overlay-color: rgba(0, 0, 0, 0.7);
+    --close-icon-color: #34495e;
+    --read-more-color: #3498db;
+    --read-more-hover-color: #2980b9;
+    --button-text-color: #ffffff; /* Set button text color to white */
+
+    /* Dark Theme Colors */
+    --dark-primary-color: #2980b9;
+    --dark-secondary-color: #1a252f;
+    --dark-background-color: #1e1e1e;
+    --dark-card-background: #2c2c2c;
+    --dark-card-border: #555;
+    --dark-text-color: #ecf0f1;
+    --dark-link-color: #ecf0f1;
+    --dark-link-hover-color: #3498db;
+    --dark-upload-button-background: #2980b9;
+    --dark-upload-button-hover: #1a5f7a;
+    --dark-prepared-icon-color: gold;
+    --dark-modal-overlay-color: rgba(0, 0, 0, 0.9);
+    --dark-close-icon-color: #ecf0f1;
+    --dark-read-more-color: #3498db;
+    --dark-read-more-hover-color: #2980b9;
+    --dark-button-text-color: #ffffff; /* Button text color remains white in dark mode */
+
+    /* Assign default colors */
+    --current-primary-color: var(--primary-color);
+    --current-secondary-color: var(--secondary-color);
+    --current-background-color: var(--background-color);
+    --current-card-background: var(--card-background);
+    --current-card-border: var(--card-border);
+    --current-text-color: var(--text-color);
+    --current-link-color: var(--link-color);
+    --current-link-hover-color: var(--link-hover-color);
+    --current-upload-button-background: var(--upload-button-background);
+    --current-upload-button-hover: var(--upload-button-hover);
+    --current-prepared-icon-color: var(--prepared-icon-color);
+    --current-modal-overlay-color: var(--modal-overlay-color);
+    --current-close-icon-color: var(--close-icon-color);
+    --current-read-more-color: var(--read-more-color);
+    --current-read-more-hover-color: var(--read-more-hover-color);
+    --current-button-text-color: var(--button-text-color);
+}
+
+/* Dark mode styles */
+body[data-theme="dark"] {
+    --current-primary-color: var(--dark-primary-color);
+    --current-secondary-color: var(--dark-secondary-color);
+    --current-background-color: var(--dark-background-color);
+    --current-card-background: var(--dark-card-background);
+    --current-card-border: var(--dark-card-border);
+    --current-text-color: var(--dark-text-color);
+    --current-link-color: var(--dark-link-color);
+    --current-link-hover-color: var(--dark-link-hover-color);
+    --current-upload-button-background: var(--dark-upload-button-background);
+    --current-upload-button-hover: var(--dark-upload-button-hover);
+    --current-prepared-icon-color: var(--dark-prepared-icon-color);
+    --current-modal-overlay-color: var(--dark-modal-overlay-color);
+    --current-close-icon-color: var(--dark-close-icon-color);
+    --current-read-more-color: var(--dark-read-more-color);
+    --current-read-more-hover-color: var(--dark-read-more-hover-color);
+    --current-button-text-color: var(--dark-button-text-color);
 }
 
 /* Body styles */
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: var(--background-color);
-    color: var(--dark-color);
+    background-color: var(--current-background-color);
+    color: var(--current-text-color);
 }
 
 /* Navbar styles */
 .navbar {
-    background-color: var(--secondary-color);
-    color: var(--light-color);
+    background-color: var(--current-secondary-color);
+    color: var(--current-text-color);
     padding: 1rem;
 }
 
@@ -37,7 +103,7 @@ body {
 }
 
 .navbar-logo {
-    color: var(--light-color);
+    color: var(--dark-button-text-color);
     text-decoration: none;
     font-size: 1.5rem;
     font-weight: bold;
@@ -54,13 +120,27 @@ body {
 }
 
 .navbar-menu a {
-    color: var(--light-color);
+    color: var(--current-text-color);
     text-decoration: none;
     font-size: 1rem;
 }
 
 .navbar-menu a:hover {
-    color: var(--primary-color);
+    color: var(--current-primary-color);
+}
+
+/* Theme Toggle Button */
+.theme-toggle-button {
+    background: none;
+    border: none;
+    color: var(--current-text-color);
+    cursor: pointer;
+    font-size: 1.5rem;
+    margin-left: 1rem;
+}
+
+.theme-toggle-button:hover {
+    color: var(--current-primary-color);
 }
 
 /* Mobile menu */
@@ -73,7 +153,7 @@ body {
 .navbar-toggle .bar {
     height: 3px;
     width: 25px;
-    background-color: var(--light-color);
+    background-color: var(--current-text-color);
     margin: 4px 0;
     transition: 0.4s;
 }
@@ -83,7 +163,7 @@ body {
         display: none;
         flex-direction: column;
         width: 100%;
-        background-color: var(--secondary-color);
+        background-color: var(--current-secondary-color);
     }
     .navbar-menu.active {
         display: flex;
@@ -101,7 +181,7 @@ body {
 /* Header Section */
 .header {
     padding: 1rem;
-    background-color: var(--primary-color);
+    background-color: var(--current-primary-color);
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -109,7 +189,7 @@ body {
 
 .tutorial .info-button {
     font-size: 1.5rem;
-    color: var(--light-color);
+    color: var(--current-text-color);
     cursor: pointer;
 }
 
@@ -118,15 +198,21 @@ body {
     display: flex;
     align-items: center;
     padding: 1rem;
-    background-color: var(--light-color);
+    background-color: var(--current-card-background);
 }
 
 .filter-bar input[type="text"] {
     flex: 0.2;
     padding: 0.5rem;
     margin-right: 1rem;
-    border: 1px solid var(--card-border);
+    border: 1px solid var(--current-card-border);
     border-radius: 4px;
+    background-color: var(--current-background-color);
+    color: var(--current-text-color);
+}
+
+.filter-bar input[type="text"]::placeholder {
+    color: var(--current-text-color);
 }
 
 .spell-filters {
@@ -135,8 +221,8 @@ body {
 }
 
 .filter-button {
-    background-color: var(--secondary-color);
-    color: var(--light-color);
+    background-color: var(--current-secondary-color);
+    color: #ffffff; /* Set text color to white for readability */
     padding: 0.5rem 1rem;
     margin: 0.25rem;
     border: none;
@@ -145,17 +231,19 @@ body {
 }
 
 .filter-button.active {
-    background-color: var(--primary-color);
+    background-color: var(--current-primary-color);
+    color: #ffffff; /* Ensure text remains white when active */
 }
 
 .filter-button:hover {
-    background-color: var(--primary-color);
+    background-color: var(--current-primary-color);
+    color: #ffffff; /* Ensure text remains white on hover */
 }
 
 /* Spell Slots Container */
 #spellSlotsContainer {
     padding: 1rem;
-    background-color: var(--light-color);
+    background-color: var(--current-card-background);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -176,14 +264,37 @@ body {
 .spell-slot label {
     margin-right: 0.5rem;
     font-weight: bold;
+    color: var(--current-text-color);
 }
 
-.checkboxes-container {
-    display: flex;
-}
-
-.checkboxes-container input[type="checkbox"] {
+.checkbox-round input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #fff;
+    border: 2px solid var(--current-text-color);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
     margin-right: 0.25rem;
+    cursor: pointer;
+}
+
+.checkbox-round input[type="checkbox"]:checked {
+    background-color: var(--current-primary-color);
+    border-color: var(--current-primary-color);
+}
+
+.checkbox-round input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 6px;
+    height: 6px;
+    background-color: #fff;
+    border-radius: 50%;
 }
 
 /* Main Content */
@@ -197,28 +308,32 @@ body {
 /* Spell Cards Container */
 .spell-cards-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 1rem;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
 }
 
 /* Spell Card */
 .spell-card {
-    background-color: var(--card-background);
-    border: 1px solid var(--card-border);
+    background-color: var(--current-card-background);
+    border: 1px solid var(--current-card-border);
     border-radius: 8px;
-    padding: 1rem;
+    padding: 1.5rem;
     position: relative;
+    word-wrap: break-word;
+    color: var(--current-text-color);
 }
 
 .spell-card h3 {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
 }
 
 .spell-card p {
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
 .prepared-icon {
@@ -226,7 +341,7 @@ body {
     top: 1rem;
     right: 1rem;
     font-size: 1.2rem;
-    color: gold;
+    color: var(--current-prepared-icon-color);
 }
 
 /* Upload Button */
@@ -236,8 +351,8 @@ body {
     margin-right: auto;
     width: 12rem;
     padding: 0.75rem 0rem;
-    background-color: var(--primary-color);
-    color: var(--light-color);
+    background-color: var(--current-upload-button-background);
+    color: #ffffff; /* Set text color to white */
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -248,7 +363,37 @@ body {
 }
 
 .upload-button:hover {
-    background-color: #2980b9;
+    background-color: var(--current-upload-button-hover);
+    color: #ffffff; /* Ensure text remains white on hover */
+}
+
+/* Spell Description */
+.spell-description {
+    position: relative;
+}
+
+.spell-description .full {
+    display: none; /* Hide full description by default */
+}
+
+.read-more-button {
+    background: none;
+    border: none;
+    color: var(--current-read-more-color);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+    margin-top: 0.5rem;
+    text-decoration: underline;
+}
+
+.read-more-button:hover {
+    color: var(--current-read-more-hover-color);
+}
+
+/* Optional: Smooth transition */
+.spell-description span {
+    transition: all 0.3s ease;
 }
 
 /* Modal Styles */
@@ -261,22 +406,23 @@ body {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: var(--current-modal-overlay-color);
 }
 
 .modal-content {
-    background-color: var(--card-background);
+    background-color: var(--current-card-background);
     margin: 10% auto;
     padding: 2rem;
-    border: 1px solid var(--card-border);
+    border: 1px solid var(--current-card-border);
     border-radius: 8px;
     width: 80%;
     max-width: 600px;
     position: relative;
+    color: var(--current-text-color);
 }
 
 .close {
-    color: var(--dark-color);
+    color: var(--current-close-icon-color);
     position: absolute;
     top: 1rem;
     right: 1rem;
@@ -287,15 +433,24 @@ body {
 
 .close:hover,
 .close:focus {
-    color: #000;
+    color: var(--current-primary-color);
     text-decoration: none;
     cursor: pointer;
+}
+
+/* Theme-specific link colors */
+a {
+    color: var(--current-link-color);
+}
+
+a:hover {
+    color: var(--current-link-hover-color);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .spell-cards-container {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     }
 
     .filter-bar {

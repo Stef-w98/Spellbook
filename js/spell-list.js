@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const slotDiv = document.createElement('div');
             slotDiv.classList.add('spell-slot');
             slotDiv.innerHTML = `
-                <label>Level ${level} Spell Slots: 
+                <label>Level ${level}: 
                     <input type="number" min="0" max="${maxSpellSlots[level]}" id="spellSlotLevel${level}" value="0">
                 </label>
             `;

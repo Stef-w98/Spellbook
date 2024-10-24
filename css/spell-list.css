@@ -5,26 +5,102 @@
     box-sizing: border-box;
 }
 
-/* Root variables */
+/* Root variables for themes */
 :root {
+    /* Light Theme Colors */
     --primary-color: #3498db;
     --secondary-color: #2c3e50;
-    --light-color: #ecf0f1;
-    --dark-color: #34495e;
     --background-color: #f4f4f4;
+    --card-background: #ffffff;
+    --card-border: #ddd;
+    --text-color: #34495e;
+    --link-color: #2c3e50;
+    --link-hover-color: #3498db;
+    --button-background: #3498db;
+    --button-hover-background: #2980b9;
+    --button-text-color: #ffffff;
+    --table-header-background: #34495e;
+    --table-header-text-color: #ffffff;
+    --table-row-background: #ecf0f1;
+    --input-background: #ffffff;
+    --input-text-color: #34495e;
+    --input-border-color: #ccc;
+    --modal-overlay-color: rgba(0, 0, 0, 0.7);
+
+    /* Dark Theme Colors */
+    --dark-primary-color: #2980b9;
+    --dark-secondary-color: #1a252f;
+    --dark-background-color: #1e1e1e;
+    --dark-card-background: #2c2c2c;
+    --dark-card-border: #555;
+    --dark-text-color: #ecf0f1;
+    --dark-link-color: #ecf0f1;
+    --dark-link-hover-color: #3498db;
+    --dark-button-background: #2980b9;
+    --dark-button-hover-background: #1a5f7a;
+    --dark-button-text-color: #ffffff;
+    --dark-table-header-background: #1a252f;
+    --dark-table-header-text-color: #ecf0f1;
+    --dark-table-row-background: #2c2c2c;
+    --dark-input-background: #1e1e1e;
+    --dark-input-text-color: #ecf0f1;
+    --dark-input-border-color: #555;
+    --dark-modal-overlay-color: rgba(0, 0, 0, 0.9);
+
+    /* Current Theme Colors */
+    --current-primary-color: var(--primary-color);
+    --current-secondary-color: var(--secondary-color);
+    --current-background-color: var(--background-color);
+    --current-card-background: var(--card-background);
+    --current-card-border: var(--card-border);
+    --current-text-color: var(--text-color);
+    --current-link-color: var(--link-color);
+    --current-link-hover-color: var(--link-hover-color);
+    --current-button-background: var(--button-background);
+    --current-button-hover-background: var(--button-hover-background);
+    --current-button-text-color: var(--button-text-color);
+    --current-table-header-background: var(--table-header-background);
+    --current-table-header-text-color: var(--table-header-text-color);
+    --current-table-row-background: var(--table-row-background);
+    --current-input-background: var(--input-background);
+    --current-input-text-color: var(--input-text-color);
+    --current-input-border-color: var(--input-border-color);
+    --current-modal-overlay-color: var(--modal-overlay-color);
+}
+
+/* Dark mode styles */
+body[data-theme="dark"] {
+    --current-primary-color: var(--dark-primary-color);
+    --current-secondary-color: var(--dark-secondary-color);
+    --current-background-color: var(--dark-background-color);
+    --current-card-background: var(--dark-card-background);
+    --current-card-border: var(--dark-card-border);
+    --current-text-color: var(--dark-text-color);
+    --current-link-color: var(--dark-link-color);
+    --current-link-hover-color: var(--dark-link-hover-color);
+    --current-button-background: var(--dark-button-background);
+    --current-button-hover-background: var(--dark-button-hover-background);
+    --current-button-text-color: var(--dark-button-text-color);
+    --current-table-header-background: var(--dark-table-header-background);
+    --current-table-header-text-color: var(--dark-table-header-text-color);
+    --current-table-row-background: var(--dark-table-row-background);
+    --current-input-background: var(--dark-input-background);
+    --current-input-text-color: var(--dark-input-text-color);
+    --current-input-border-color: var(--dark-input-border-color);
+    --current-modal-overlay-color: var(--dark-modal-overlay-color);
 }
 
 /* Body styles */
 body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: var(--background-color);
-    color: var(--dark-color);
+    background-color: var(--current-background-color);
+    color: var(--current-text-color);
 }
 
 /* Navbar styles */
 .navbar {
-    background-color: var(--secondary-color);
-    color: var(--light-color);
+    background-color: var(--current-secondary-color);
+    color: var(--current-text-color);
     padding: 1rem;
 }
 
@@ -35,7 +111,7 @@ body {
 }
 
 .navbar-logo {
-    color: var(--light-color);
+    color: var(--dark-button-text-color);
     text-decoration: none;
     font-size: 1.5rem;
     font-weight: bold;
@@ -52,13 +128,27 @@ body {
 }
 
 .navbar-menu a {
-    color: var(--light-color);
+    color: var(--current-text-color);
     text-decoration: none;
     font-size: 1rem;
 }
 
 .navbar-menu a:hover {
-    color: var(--primary-color);
+    color: var(--current-primary-color);
+}
+
+/* Theme Toggle Button */
+.theme-toggle-button {
+    background: none;
+    border: none;
+    color: var(--current-text-color);
+    cursor: pointer;
+    font-size: 1.5rem;
+    margin-left: 1rem;
+}
+
+.theme-toggle-button:hover {
+    color: var(--current-primary-color);
 }
 
 /* Mobile menu */
@@ -71,7 +161,7 @@ body {
 .navbar-toggle .bar {
     height: 3px;
     width: 25px;
-    background-color: var(--light-color);
+    background-color: var(--current-text-color);
     margin: 4px 0;
     transition: 0.4s;
 }
@@ -81,7 +171,7 @@ body {
         display: none;
         flex-direction: column;
         width: 100%;
-        background-color: var(--secondary-color);
+        background-color: var(--current-secondary-color);
     }
     .navbar-menu.active {
         display: flex;
@@ -117,9 +207,14 @@ body {
     top: 0; /* Adjust if you have a fixed navbar */
     height: 100vh;
     overflow-y: auto;
-    background-color: #fff; /* Optional */
+    background-color: var(--current-card-background);
     box-shadow: -2px 0 5px rgba(0,0,0,0.1); /* Optional */
     padding: 1.5rem;
+    color: var(--current-text-color);
+}
+
+.h3-mt{
+    margin-top: 3.6rem;
 }
 
 /* Spell table */
@@ -130,11 +225,11 @@ table {
 }
 
 table thead {
-    background-color: var(--dark-color);
+    background-color: var(--current-table-header-background);
 }
 
 table thead th {
-    color: var(--light-color);
+    color: var(--current-table-header-text-color);
     padding: 0.75rem;
     text-align: left;
     position: relative;
@@ -144,11 +239,12 @@ table thead th {
 table th, table td {
     padding: 0.75rem;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--current-card-border);
+    color: var(--current-text-color);
 }
 
 table tr:nth-child(even) {
-    background-color: var(--light-color);
+    background-color: var(--current-table-row-background);
 }
 
 th.sortable .sort-icon-up, th.sortable .sort-icon-down {
@@ -166,19 +262,31 @@ th.sorted.desc .sort-icon-down {
     opacity: 1;
 }
 
+.spell-name{
+    cursor: pointer;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.spell-name:hover {
+    color: var(--current-primary-color); /* Or any color you prefer */
+    text-decoration: underline;
+}
+
 /* Search input */
 #spellSearch {
     width: 100%;
     padding: 0.75rem;
     margin-top: 1rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--current-input-border-color);
     border-radius: 4px;
+    background-color: var(--current-input-background);
+    color: var(--current-input-text-color);
 }
 
 /* Buttons */
 button {
-    background-color: var(--primary-color);
-    color: #fff;
+    background-color: var(--current-button-background);
+    color: var(--current-button-text-color);
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 4px;
@@ -187,7 +295,7 @@ button {
 }
 
 button:hover {
-    background-color: #2980b9;
+    background-color: var(--current-button-hover-background);
 }
 
 .add-spell-button {
@@ -195,18 +303,37 @@ button:hover {
     font-size: 0.9rem;
 }
 
+.remove-spell-button {
+    background-color: #e74c3c;
+    transition: background-color 0.3s ease;
+}
+
+.remove-spell-button:hover {
+    background-color: #c0392b;
+}
+
+#resetButton {
+    background-color: #e74c3c;
+}
+
+#resetButton:hover {
+    background-color: #c0392b;
+}
+
 /* Spell list container */
 .spell-list-container h3 {
     margin-bottom: 1rem;
-    color: var(--dark-color);
+    color: var(--current-text-color);
 }
 
 .spell-list-container input[type="text"] {
     width: 100%;
     padding: 0.75rem;
     margin-bottom: 1rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--current-input-border-color);
     border-radius: 4px;
+    background-color: var(--current-input-background);
+    color: var(--current-input-text-color);
 }
 
 .spell-list-container ul {
@@ -219,7 +346,7 @@ button:hover {
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem 0;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--current-card-border);
 }
 
 .spell-list-container li:last-child {
@@ -233,6 +360,7 @@ button:hover {
 .spell-list-container .remove-spell-button {
     background-color: #e74c3c;
     transition: background-color 0.3s ease;
+    color: #ffffff;
 }
 
 .spell-list-container .remove-spell-button:hover {
@@ -246,6 +374,7 @@ button:hover {
 
 #spellSlotsContainer h3 {
     margin-bottom: 0.5rem;
+    color: var(--current-text-color);
 }
 
 .spell-slot {
@@ -255,14 +384,17 @@ button:hover {
 .spell-slot label {
     display: flex;
     align-items: center;
+    color: var(--current-text-color);
 }
 
 .spell-slot input[type="number"] {
     width: 60px;
     padding: 0.25rem;
     margin-left: 0.5rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--current-input-border-color);
     border-radius: 4px;
+    background-color: var(--current-input-background);
+    color: var(--current-input-text-color);
 }
 
 /* Loading bar */
@@ -277,7 +409,7 @@ button:hover {
 .loading-percentage {
     margin-top: 10px;
     font-size: 1.5em;
-    color: #333;
+    color: var(--current-text-color);
 }
 
 .ldBar-label {
