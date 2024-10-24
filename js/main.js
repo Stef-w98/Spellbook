@@ -1,40 +1,65 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const spellList = document.getElementById('spellList');
+    const resetButton = document.getElementById('resetButton');
+    const exportJsonButton = document.getElementById('exportJson');
+    const spellListNameInput = document.getElementById('spellListName');
+    const spellSlotsContainer = document.getElementById('spellSlotsContainer');
     const fileInput = document.getElementById('fileInput');
     const spellCardsContainer = document.getElementById('spellCardsContainer');
     const searchInput = document.getElementById('searchSpells');
     const filterButtons = document.querySelectorAll('.filter-button');
     let allSpells = []; // Store all spells after parsing
 
+    // Create prepared filter button
+    const preparedFilterButton = document.createElement('button');
+    preparedFilterButton.textContent = 'Prepared Only';
+    preparedFilterButton.classList.add('filter-button', 'prepared-filter-button');
+    document.querySelector('.spell-filters').appendChild(preparedFilterButton);
+
     fileInput.addEventListener('change', handleFileUpload);
     searchInput.addEventListener('input', filterSpells);
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            button.classList.toggle('active');
+
+    document.querySelector('.spell-filters').addEventListener('click', function(event) {
+        if (event.target.classList.contains('filter-button')) {
+            if (event.target.classList.contains('prepared-filter-button')) {
+                event.target.classList.toggle('active');
+            } else {
+                event.target.classList.toggle('active');
+            }
             filterSpells();
-        });
+        }
     });
 
     function handleFileUpload(event) {
         const file = event.target.files[0];
         if (file) {
-            console.log(`File selected: ${file.name}`);
             const reader = new FileReader();
             reader.onload = function (e) {
                 const content = e.target.result;
-                console.log(`File content loaded`);
                 let spells = [];
                 if (file.name.endsWith('.json') || file.name.endsWith('.spellbook')) {
                     try {
-                        spells = JSON.parse(content);
-                        console.log(`JSON parsed successfully`);
+                        const data = JSON.parse(content);
+                        spells = data.spells || [];
+                        const spellSlots = data.spellSlots || {};
+                        allSpells = spells; // Update the allSpells array
+                        createSpellSlotInputs(spellSlots); // Ensure spell slots inputs are created
+                        displaySpells(spells);
+                        resetFilters(); // Reset any active filters after loading
                     } catch (err) {
                         console.error(`Error parsing JSON: ${err}`);
+                        return;
                     }
                 }
-                displaySpells(spells);
             };
             reader.readAsText(file);
         }
+    }
+
+    function resetFilters() {
+        searchInput.value = ''; // Clear search box
+        filterButtons.forEach(button => button.classList.remove('active')); // Remove active state from filter buttons
+        filterSpells(); // Reapply filters, if any
     }
 
     function displaySpells(spells) {
@@ -50,13 +75,16 @@ document.addEventListener('DOMContentLoaded', function () {
     function filterSpells() {
         const searchTerm = searchInput.value.toLowerCase();
         const activeLevels = Array.from(filterButtons)
-            .filter(button => button.classList.contains('active'))
+            .filter(button => button.classList.contains('active') && !button.classList.contains('prepared-filter-button'))
             .map(button => parseInt(button.dataset.level));
+
+        const preparedOnly = preparedFilterButton.classList.contains('active');
 
         const filteredSpells = allSpells.filter(spell => {
             const matchesSearch = spell.name.toLowerCase().includes(searchTerm);
             const matchesLevel = activeLevels.length === 0 || activeLevels.includes(spell.level);
-            return matchesSearch && matchesLevel;
+            const matchesPrepared = !preparedOnly || spell.prepared;
+            return matchesSearch && matchesLevel && matchesPrepared;
         });
 
         displaySpells(filteredSpells);
@@ -84,7 +112,86 @@ document.addEventListener('DOMContentLoaded', function () {
         <p><strong>Classes:</strong> ${spell.classes}</p>
         <p><strong>Subclasses:</strong> ${spell.subclasses}</p>
     `;
+
+        if (spell.prepared) {
+            const preparedIcon = document.createElement('span');
+            preparedIcon.classList.add('prepared-icon');
+            preparedIcon.innerHTML = '&#9733;'; // Star icon
+            preparedIcon.title = 'Prepared Spell';
+            card.appendChild(preparedIcon);
+        }
+
         return card;
     }
-});
 
+    function createSpellSlotInputs(spellSlots = {}) {
+        spellSlotsContainer.innerHTML = ''; // Clear previous spell slots
+
+        const slotsRow = document.createElement('div');
+        slotsRow.classList.add('spell-slots-row');
+
+        for (let level = 1; level <= 9; level++) {
+            const numSlots = spellSlots[`level${level}`] || 0;
+            if (numSlots > 0) { // Only display levels with spell slots
+                const slotDiv = document.createElement('span');
+                slotDiv.classList.add('spell-slot');
+                const label = document.createElement('label');
+                label.textContent = `Lvl ${level}: `;
+
+                // Create checkboxes in a row
+                const checkboxesContainer = document.createElement('span');
+                checkboxesContainer.classList.add('checkboxes-container');
+
+                for (let i = 0; i < numSlots; i++) {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.classList.add('spell-slot-checkbox');
+                    checkbox.dataset.level = level;
+                    checkbox.dataset.index = i;
+                    checkbox.addEventListener('change', function () {
+                        if (checkbox.checked) {
+                            // Ensure all previous checkboxes are checked
+                            for (let j = 0; j < i; j++) {
+                                const prevCheckbox = checkboxesContainer.querySelector(`[data-index="${j}"]`);
+                                if (!prevCheckbox.checked) {
+                                    checkbox.checked = false;
+                                    break;
+                                }
+                            }
+                        } else {
+                            // Ensure you can only uncheck from the last one
+                            for (let j = i + 1; j < numSlots; j++) {
+                                const nextCheckbox = checkboxesContainer.querySelector(`[data-index="${j}"]`);
+                                if (nextCheckbox.checked) {
+                                    checkbox.checked = true;
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                    checkboxesContainer.appendChild(checkbox);
+                }
+
+                slotDiv.appendChild(label);
+                slotDiv.appendChild(checkboxesContainer);
+                slotsRow.appendChild(slotDiv);
+            }
+        }
+
+        spellSlotsContainer.appendChild(slotsRow);
+
+        // Create a reset button to clear checkboxes
+        const resetSlotsButton = document.createElement('button');
+        resetSlotsButton.textContent = 'Reset Slots';
+        resetSlotsButton.addEventListener('click', function () {
+            const checkboxes = document.querySelectorAll('.spell-slot-checkbox');
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+        });
+
+        spellSlotsContainer.appendChild(resetSlotsButton);
+    }
+
+    function loadSpellSlots(spellSlots) {
+        createSpellSlotInputs(spellSlots);
+    }
+});

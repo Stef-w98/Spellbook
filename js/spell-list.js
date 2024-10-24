@@ -3,6 +3,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const resetButton = document.getElementById('resetButton');
     const exportJsonButton = document.getElementById('exportJson');
     const spellListNameInput = document.getElementById('spellListName');
+    const spellSlotsContainer = document.getElementById('spellSlotsContainer');
+
+    // Create spell slot inputs for each level (1 to 9)
+    createSpellSlotInputs();
 
     document.addEventListener('click', async function (event) {
         if (event.target && event.target.classList.contains('add-spell-button')) {
@@ -29,15 +33,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
     exportJsonButton.addEventListener('click', function () {
         const spells = getSelectedSpells().map(spellToJson);
-        const jsonContent = JSON.stringify(spells, null, 2);
+        const spellSlots = getSpellSlots(); // Collect spell slot information
+        const jsonContent = JSON.stringify({ spells, spellSlots }, null, 2);
         const spellListName = spellListNameInput.value.trim() || 'spells'; // Fallback to 'spells' if no name is provided
         downloadFile(`${spellListName}.spellbook`, jsonContent); // Save as .spellbook extension
     });
+
+    function createSpellSlotInputs() {
+        const spellSlotsDiv = document.createElement('div');
+        spellSlotsDiv.id = 'spellSlots';
+        for (let level = 1; level <= 9; level++) {
+            const slotDiv = document.createElement('div');
+            slotDiv.classList.add('spell-slot');
+            slotDiv.innerHTML = `
+                <label>Level ${level} Spell Slots: 
+                    <input type="number" min="0" id="spellSlotLevel${level}" value="0">
+                </label>
+            `;
+            spellSlotsDiv.appendChild(slotDiv);
+        }
+        spellSlotsContainer.appendChild(spellSlotsDiv);
+    }
+
+    function getSpellSlots() {
+        const spellSlots = {};
+        for (let level = 1; level <= 9; level++) {
+            const slotInput = document.getElementById(`spellSlotLevel${level}`);
+            spellSlots[`level${level}`] = parseInt(slotInput.value, 10) || 0;
+        }
+        return spellSlots;
+    }
 
     function addSpellToList(spell) {
         const spellItem = document.createElement('li');
         spellItem.innerHTML = `
             <span>${spell.name}</span>
+            <input type="checkbox" class="prepared-checkbox" data-spell-name="${spell.name}" /> Prepared
             <button class="remove-spell-button">Remove</button>
         `;
         spellItem.dataset.spell = JSON.stringify(spell); // Store the full spell details in the element's data
@@ -45,7 +76,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function getSelectedSpells() {
-        return Array.from(spellList.querySelectorAll('li')).map(li => JSON.parse(li.dataset.spell));
+        return Array.from(spellList.querySelectorAll('li')).map(li => {
+            const spell = JSON.parse(li.dataset.spell);
+            spell.prepared = li.querySelector('.prepared-checkbox').checked;
+            return spell;
+        });
     }
 
     async function fetchSpellDetails(spellName) {
@@ -94,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
             damage_at_slot_levels: spell.damage_at_slot_levels || 'None',
             classes: spell.classes,
             subclasses: spell.subclasses,
+            prepared: spell.prepared || false
         };
     }
 
@@ -115,4 +151,3 @@ document.addEventListener('DOMContentLoaded', function () {
         link.click();
     }
 });
-
