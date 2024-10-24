@@ -1,0 +1,137 @@
+/* Navbar Styles */
+.navbar {
+    background-color: #2E8B57;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+}
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    height: 60px;
+    z-index: 1;
+    width: 100%;
+    max-width: 1500px;
+    padding: 0 50px;
+}
+
+.navbar-logo {
+    color: #fff;
+    justify-self: start;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-menu {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    text-align: center;
+}
+
+.navbar-menu li {
+    height: 60px;
+}
+
+.navbar-menu li a {
+    color: #fff;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 0 1rem;
+    height: 100%;
+}
+
+.navbar-menu li a:hover {
+    border-bottom: 3px solid #FFD700;
+}
+
+.navbar-toggle {
+    display: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 2rem;
+}
+
+.navbar-toggle .bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    background-color: #fff;
+}
+
+/* Mobile Styles */
+@media screen and (max-width: 960px) {
+    .navbar-menu {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 90vh;
+        position: absolute;
+        top: 60px;
+        left: -100%;
+        opacity: 1;
+        transition: all 0.5s ease;
+        background-color: #2E8B57;
+    }
+
+    .navbar-menu.active {
+        background: #4CAF50;
+        left: 0;
+        opacity: 1;
+        transition: all 0.5s ease;
+        z-index: 1;
+    }
+
+    .navbar-toggle {
+        display: block;
+    }
+}
+
+.filter-bar {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 60px; /* Adjust if needed to position below navbar */
+}
+
+.filter-bar input {
+    padding: 0.5rem;
+    margin-right: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.spell-filters {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #2E8B57;
+    color: white;
+    cursor: pointer;
+}
+
+.filter-button.active {
+    background-color: #4CAF50; /* Active state color */
+}
+
